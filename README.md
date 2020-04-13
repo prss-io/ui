@@ -3,7 +3,6 @@
   <blockquote>Client Utilities for PRSS Themes</blockquote>
 </p>
 
-## 📦 Installation
 ```
 npm install prss --save-dev
 ```
