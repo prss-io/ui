@@ -1,6 +1,6 @@
 const path = require('path');
 const webpack = require('webpack');
-const PrettierPlugin = require("prettier-webpack-plugin");
+const PrettierPlugin = require('prettier-webpack-plugin');
 const getPackageJson = require('./scripts/getPackageJson');
 
 const {
@@ -8,21 +8,21 @@ const {
   name,
   license,
   repository,
-  author,
+  author
 } = getPackageJson('version', 'name', 'license', 'repository', 'author');
 
 const banner = `
   ${name} v${version}
   ${repository.url}
 
-  Copyright (c) ${author.replace(/ *\<[^)]*\> */g, " ")}
+  Copyright (c) ${author.replace(/ *\<[^)]*\> */g, ' ')}
 
   This source code is licensed under the ${license} license found in the
   LICENSE file in the root directory of this source tree.
 `;
 
 module.exports = {
-  mode: "production",
+  mode: 'production',
   entry: './src/index.js',
   output: {
     filename: 'index.js',
@@ -41,16 +41,24 @@ module.exports = {
       },
       {
         test: /\.css$/i,
-        use: ['style-loader', 'css-loader'],
+        use: ['style-loader', 'css-loader']
       },
       {
         test: /\.(png|jpe?g|gif|svg|eot|ttf|woff|woff2)$/,
-        use: ['url-loader'],
+        use: ['url-loader']
       }
     ]
   },
   plugins: [
-    new PrettierPlugin(),
+    new PrettierPlugin({
+      printWidth: 80,
+      tabWidth: 4,
+      semi: true,
+      singleQuote: true,
+      jsxSingleQuote: false,
+      bracketSpacing: true,
+      trailingComma: 'none'
+    }),
     new webpack.BannerPlugin(banner)
   ]
 };
