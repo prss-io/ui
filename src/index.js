@@ -212,3 +212,32 @@ export const shuffle = (arr = []) => {
 
     return newArr;
 };
+
+export const hasItem = (uuid, nodes) => {
+    return JSON.stringify(nodes).includes(uuid);
+};
+
+export const findInStructure = (postId) => {
+    const { structure } = getProp('site');
+    let foundItem;
+
+    const checkNode = (node) => {
+        if (node.key === postId) {
+            foundItem = node;
+            return true;
+        } else {
+            return node.children ? node.children.some(checkNode) : false;
+        }
+    };
+
+    structure.some(checkNode);
+
+    return foundItem;
+};
+
+export const getItemChildren = (itemId) => {
+    const structureItem = findInStructure(itemId);
+    const structureItemChildren =
+        structureItem && structureItem.children ? structureItem.children : [];
+    return structureItemChildren.map((childItem) => getItem(childItem.key));
+};
