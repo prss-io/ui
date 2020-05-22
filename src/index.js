@@ -50,6 +50,10 @@ export const getPathUrl = (p = '') => {
         siteUrl += '/';
     }
 
+    if (p && p.length && p[p.length - 1] !== '/') {
+        p += '/';
+    }
+
     return siteUrl + p;
 };
 
@@ -240,4 +244,9 @@ export const getItemChildren = (itemId) => {
     const structureItemChildren =
         structureItem && structureItem.children ? structureItem.children : [];
     return structureItemChildren.map((childItem) => getItem(childItem.key));
+};
+
+export const truncateStr = (str, len = 50) => {
+    if (str.length > len) return str.substring(0, len) + '...';
+    else return str;
 };
