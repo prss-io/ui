@@ -3,6 +3,9 @@ let items = null;
 
 export const init = (data) => {
     bufferItem = data;
+    window.onload = () => {
+        processPRSSLinks();
+    };
 };
 
 export const getProp = (s) => {
@@ -249,4 +252,12 @@ export const getItemChildren = (itemId) => {
 export const truncateStr = (str, len = 50) => {
     if (str.length > len) return str.substring(0, len) + '...';
     else return str;
+};
+
+export const processPRSSLinks = () => {
+    const links = document.querySelectorAll('a[data-prss-path]');
+    links.forEach((link) => {
+        const linkPath = link.getAttribute('data-prss-path');
+        link.setAttribute('href', getPathUrl(linkPath));
+    });
 };

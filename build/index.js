@@ -1,11 +1,11 @@
 /*!
  *
- *   prss v1.1.1
+ *   prss v1.1.2
  *   https://github.com/prss-io/prss-client
  *
  *   Copyright (c) Francisco Hodge (https://github.com/hodgef)
  *
- *   This source code is licensed under the MIT license found in the
+ *   This source code is licensed under the GPL-3.0-or-later license found in the
  *   LICENSE file in the root directory of this source tree.
  *
  */
@@ -86,7 +86,7 @@
             function e(t) {
                 return (
                     (function(t) {
-                        if (Array.isArray(t)) return a(t);
+                        if (Array.isArray(t)) return f(t);
                     })(t) ||
                     (function(t) {
                         if (
@@ -95,7 +95,7 @@
                         )
                             return Array.from(t);
                     })(t) ||
-                    f(t) ||
+                    a(t) ||
                     (function() {
                         throw new TypeError(
                             'Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.'
@@ -185,7 +185,7 @@
                             return r;
                         }
                     })(t, n) ||
-                    f(t, n) ||
+                    a(t, n) ||
                     (function() {
                         throw new TypeError(
                             'Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.'
@@ -193,9 +193,9 @@
                     })()
                 );
             }
-            function f(t, n) {
+            function a(t, n) {
                 if (t) {
-                    if ('string' == typeof t) return a(t, n);
+                    if ('string' == typeof t) return f(t, n);
                     var r = Object.prototype.toString.call(t).slice(8, -1);
                     return (
                         'Object' === r &&
@@ -205,12 +205,12 @@
                             ? Array.from(r)
                             : 'Arguments' === r ||
                               /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(r)
-                            ? a(t, n)
+                            ? f(t, n)
                             : void 0
                     );
                 }
             }
-            function a(t, n) {
+            function f(t, n) {
                 (null == n || n > t.length) && (n = t.length);
                 for (var r = 0, e = Array(n); r < n; r++) e[r] = t[r];
                 return e;
@@ -226,10 +226,10 @@
                     return y;
                 }),
                 r.d(n, 'propExists', function() {
-                    return m;
+                    return h;
                 }),
                 r.d(n, 'objGet', function() {
-                    return h;
+                    return m;
                 }),
                 r.d(n, 'getAllProps', function() {
                     return b;
@@ -250,16 +250,16 @@
                     return j;
                 }),
                 r.d(n, 'getRawPostItem', function() {
-                    return P;
-                }),
-                r.d(n, 'getItem', function() {
                     return w;
                 }),
+                r.d(n, 'getItem', function() {
+                    return P;
+                }),
                 r.d(n, 'getItems', function() {
-                    return I;
+                    return A;
                 }),
                 r.d(n, 'walkStructure', function() {
-                    return A;
+                    return I;
                 }),
                 r.d(n, 'shuffle', function() {
                     return x;
@@ -275,22 +275,28 @@
                 }),
                 r.d(n, 'truncateStr', function() {
                     return E;
+                }),
+                r.d(n, 'processPRSSLinks', function() {
+                    return R;
                 });
             var l = null,
                 d = null,
                 s = function(t) {
-                    l = t;
+                    (l = t),
+                        (window.onload = function() {
+                            R();
+                        });
                 },
                 p = function(t) {
                     if (!l)
                         throw new Error(
                             'PRSS Site Configuration is not defined!'
                         );
-                    return h(t, l);
+                    return m(t, l);
                 },
                 y = function(t) {
                     var n;
-                    if (m(t))
+                    if (h(t))
                         try {
                             n = JSON.parse(p(t));
                         } catch (n) {
@@ -301,10 +307,10 @@
                         }
                     return n;
                 },
-                m = function(t) {
+                h = function(t) {
                     return void 0 !== p(t);
                 },
-                h = function(t, n) {
+                m = function(t, n) {
                     return t.split('.').reduce(function(t, n) {
                         return t ? t[n] : '';
                     }, n);
@@ -394,17 +400,17 @@
                         e
                     );
                 },
-                P = function(t) {
+                w = function(t) {
                     return (PRSSItems || []).find(function(n) {
                         return n.uuid === t;
                     });
                 },
-                w = function(t) {
-                    return I().find(function(n) {
+                P = function(t) {
+                    return A().find(function(n) {
                         return n.uuid === t;
                     });
                 },
-                I = function(t, n) {
+                A = function(t, n) {
                     if (!PRSSItems) return [];
                     var r = p('site').structure,
                         e = j(r),
@@ -415,7 +421,7 @@
                                     r = t
                                         .split('/')
                                         .map(function(t) {
-                                            return t ? (n = P(t)).slug : '';
+                                            return t ? (n = w(t)).slug : '';
                                         })
                                         .slice(2)
                                         .join('/');
@@ -437,7 +443,7 @@
                         i
                     );
                 },
-                A = function(t) {
+                I = function(t) {
                     var n =
                             1 < arguments.length && void 0 !== arguments[1]
                                 ? arguments[1]
@@ -447,7 +453,7 @@
                             var r = t.key,
                                 e = t.children,
                                 i = void 0 === e ? [] : e,
-                                c = P(r);
+                                c = w(r);
                             return c
                                 ? u({ key: r }, n ? n(c) : {}, {
                                       children: i.map(o)
@@ -494,7 +500,7 @@
                 k = function(t) {
                     var n = M(t);
                     return (n && n.children ? n.children : []).map(function(t) {
-                        return w(t.key);
+                        return P(t.key);
                     });
                 },
                 E = function(t) {
@@ -503,6 +509,14 @@
                             ? arguments[1]
                             : 50;
                     return t.length > n ? t.substring(0, n) + '...' : t;
+                },
+                R = function() {
+                    document
+                        .querySelectorAll('a[data-prss-path]')
+                        .forEach(function(t) {
+                            var n = t.getAttribute('data-prss-path');
+                            t.setAttribute('href', v(n));
+                        });
                 };
         }
     ]);
