@@ -12,23 +12,32 @@ interface BlockRendererProps {
   specializedType?: string;
   content: any;
   id: string;
+  customBlockComponents?: Record<string, React.ComponentType<any>>;
 }
 
 const BlockRenderer: React.FC<BlockRendererProps> = ({ 
   type, 
   specializedType, 
   content, 
-  id 
+  id,
+  customBlockComponents = {}
 }) => {
+  // Merge static block components with custom ones, with custom taking precedence
+  const mergedBlockComponents = { ...blockComponents, ...customBlockComponents };
+  
   const componentKey = specializedType || type;
-  const Component = blockComponents[componentKey];
+  const Component = mergedBlockComponents[componentKey];
   
   if (!Component) {
     console.warn(`No component found for block type: ${componentKey}`);
     return null;
   }
   
-  return <Component {...content} key={id} />;
+  return (
+    <div data-block-id={id}>
+      <Component {...content} />
+    </div>
+  );
 };
 
 export default BlockRenderer;

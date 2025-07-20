@@ -207,7 +207,7 @@ export const appendToHead = (html) => document.head.innerHTML += html;
 
 export const appendToBody = (html) => document.body.innerHTML += html;
 
-export const getItems = (itemTemplate?, sortItems?, itemsOverride?) => {
+export const getItems = (itemTemplate?, sortItems?, itemsOverride?, category?: string) => {
     if (!PRSSItems && !itemsOverride) {
         console.error("getItems: No PRSSItems found.");
         return [];
@@ -264,6 +264,12 @@ export const getItems = (itemTemplate?, sortItems?, itemsOverride?) => {
 
     if(itemsOverride){
         outputItems = outputItems.filter((item) => !!itemsOverride.find(({ uuid }) => uuid === item.uuid));
+    }
+
+    if( category) {
+        outputItems = outputItems.filter((item) => {
+            return item.vars?.category && item.vars.category.toLowerCase() === category?.toLowerCase();
+        });
     }
 
     return outputItems;

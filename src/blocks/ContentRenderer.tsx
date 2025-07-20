@@ -5,9 +5,10 @@ import BlockRenderer from "./BlockRenderer";
 interface ContentRendererProps {
   content: string;
   className?: string;
+  customBlockComponents?: Record<string, React.ComponentType<any>>;
 }
 
-const ContentRenderer: React.FC<ContentRendererProps> = ({ content, className }) => {
+const ContentRenderer: React.FC<ContentRendererProps> = ({ content, className, customBlockComponents }) => {
   const { processedHtml, blocks } = parseBlockElements(content);
   
   // Split the processed HTML by block placeholders
@@ -31,6 +32,7 @@ const ContentRenderer: React.FC<ContentRendererProps> = ({ content, className })
                 specializedType={block.specializedType}
                 content={block.content}
                 id={block.id}
+                customBlockComponents={customBlockComponents}
               />
             );
           }
