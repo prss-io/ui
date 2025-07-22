@@ -1,5 +1,7 @@
 import React from "react";
 
+import './styles/HeroBanner.css';
+
 interface HeroBannerProps {
   fields: {
     title?: string;

@@ -44,7 +44,7 @@ module.exports = {
       cacheGroups: {
         // Merge all the CSS into one file
         index: {
-          name: "index",
+          name: "blocks",
           test: /\.s?css$/,
           chunks: "all",
           minChunks: 1,
@@ -93,7 +93,7 @@ module.exports = {
   },
   plugins: [
     new MiniCssExtractPlugin({
-      filename: "index.css"
+      filename: "blocks.css"
     }),
   ]
 };
