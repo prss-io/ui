@@ -1,6 +1,6 @@
 {
   "name": "@prss/ui",
-  "version": "2.1.2",
+  "version": "2.1.3",
   "description": "PRSS UI Library",
   "main": "build/index.js",
   "scripts": {

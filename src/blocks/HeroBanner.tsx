@@ -1,6 +1,8 @@
 import React from "react";
 
 import './styles/HeroBanner.css';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 
 interface HeroBannerProps {
   fields: {
@@ -29,16 +31,26 @@ const HeroBanner: React.FC<HeroBannerProps> = ({ fields }) => {
     height = '500px'
   } = fields;
 
+  const getAlignmentClasses = (alignment: string) => {
+    switch (alignment) {
+      case 'left':
+        return 'items-start text-left';
+      case 'right':
+        return 'items-end text-right';
+      case 'center':
+      default:
+        return 'items-center text-center';
+    }
+  };
+
   return (
-    <div 
-      className="hero-banner relative flex items-center justify-center"
+    <Card 
+      className="hero-banner relative flex items-center justify-center overflow-hidden border-0"
       style={{
         height,
         backgroundImage: backgroundImage ? `url('${backgroundImage}')` : undefined,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
-        textAlign: alignment as any,
-        color: textColor
       }}
     >
       {overlayColor && (
@@ -47,23 +59,29 @@ const HeroBanner: React.FC<HeroBannerProps> = ({ fields }) => {
           style={{ backgroundColor: overlayColor }}
         />
       )}
-      <div className="relative p-8 max-w-4xl">
+      <CardContent className={`relative p-5 flex flex-col ${getAlignmentClasses(alignment)}`} style={{ color: textColor }}>
         {title && (
-          <h1 className="mb-4 text-4xl font-bold">{title}</h1>
+          <h1 className="mb-4 text-4xl font-bold" style={{
+            textShadow: '1px 1px 3px rgba(0, 0, 0, 0.2)',
+            padding: "0 20px 0 20px",
+            color: textColor
+          }}>{title}</h1>
         )}
         {subtitle && (
-          <p className="mb-8 text-xl">{subtitle}</p>
+          <p className="mb-8" style={{ color: textColor }}>{subtitle}</p>
         )}
         {buttonText && buttonUrl && (
-          <a 
-            href={buttonUrl} 
-            className="btn btn-primary inline-block px-6 py-3 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
-          >
-            {buttonText}
-          </a>
+          <Button variant="outline" asChild>
+            <a href={buttonUrl} className="mt-2 btn font-bold text-md px-4 py-2 font-bold" style={{
+              color: textColor,
+              fontSize: '16px',
+            }}>
+              {buttonText}
+            </a>
+          </Button>
         )}
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 };
 
