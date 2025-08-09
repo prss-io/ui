@@ -5,6 +5,7 @@ const path = require("path");
 const webpack = require("webpack");
 const config = require("../webpack.config");
 const blocksConfig = require("../blocks.webpack.config");
+const clientScriptConfig = require("../clientScript.webpack.config");
 const buildFolder = path.resolve(__dirname, "../build");
 
 config.plugins.push(function () {
@@ -33,6 +34,13 @@ const start = async () => {
      */
     webpack(blocksConfig).run(() => {
       console.log("Blocks build completed.");
+    });
+
+    /**
+     * Run client script webpack
+     */
+    webpack(clientScriptConfig).run(() => {
+      console.log("Client script build completed.");
     });
   });
 }
