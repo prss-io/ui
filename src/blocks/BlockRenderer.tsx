@@ -2,12 +2,14 @@ import React from "react";
 import HeroBanner from "./HeroBanner";
 import CodeBlock from "./CodeBlock";
 import Gallery from "./Gallery";
+import CardBlock from "./CardBlock";
 
 // Registry of block components
 const blockComponents = {
   hero: HeroBanner,
   "code-block": CodeBlock,
   gallery: Gallery,
+  card: CardBlock,
   // Add more block types here as needed
 };
 
