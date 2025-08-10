@@ -1,3 +1,5 @@
+import "./index.css";
+
 // Export all core utilities
 export * from './core';
 

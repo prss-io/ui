@@ -51,15 +51,6 @@
   pointer-events: none;
 }
 
-.accordion-content {
-  background: hsl(var(--card));
-  padding: 1rem 0 1rem 0;
-  font-size: 0.875rem;
-  line-height: 1.6;
-  color: hsl(var(--muted-foreground));
-  overflow: hidden;
-}
-
 .accordion-content .prose {
   color: hsl(var(--foreground));
   max-width: none;

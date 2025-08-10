@@ -146,7 +146,7 @@ const Gallery: React.FC<GalleryProps> = ({ fields }) => {
                 data-action={dataAction}
                 data-gallery-url={image.url}
                 data-gallery-alt={image.alt}
-                data-gallery-caption={image.caption || ""}
+                data-gallery-caption={image.caption || undefined}
                 style={{
                   borderRadius: borderRadius,
                   height: aspectRatio === "auto" ? imageHeight : undefined,
