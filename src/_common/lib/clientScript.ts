@@ -595,22 +595,22 @@ function initGalleryLightbox() {
     lightboxImage.src = imageUrl;
     lightboxImage.alt = imageAlt;
     
-    if (imageAlt && lightboxTitle) {
+    if (imageAlt && imageAlt !== 'undefined' && imageAlt.trim() !== '' && lightboxTitle) {
       lightboxTitle.textContent = imageAlt;
       lightboxTitle.style.display = 'block';
     } else {
       lightboxTitle.style.display = 'none';
     }
     
-    if (imageCaption && imageCaption.trim() !== '' && lightboxCaptionText) {
+    if (imageCaption && imageCaption !== 'undefined' && imageCaption.trim() !== '' && lightboxCaptionText) {
       lightboxCaptionText.textContent = imageCaption;
       lightboxCaptionText.style.display = 'block';
     } else {
       lightboxCaptionText.style.display = 'none';
     }
     
-    const hasTitle = imageAlt && imageAlt.trim() !== '';
-    const hasCaption = imageCaption && imageCaption.trim() !== '';
+    const hasTitle = imageAlt && imageAlt !== 'undefined' && imageAlt.trim() !== '';
+    const hasCaption = imageCaption && imageCaption !== 'undefined' && imageCaption.trim() !== '';
     
     if (hasTitle || hasCaption) {
       lightboxCaption.style.display = 'block';

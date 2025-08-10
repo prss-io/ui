@@ -425,17 +425,17 @@ const CodeBlock: React.FC<CodeBlockProps> = ({ fields }) => {
             </div>
           </div>
           {title && (
-            <h3 className={cn(
+            <div className={cn(
               "code-block__title text-lg font-semibold",
               theme === "dark" ? "text-white" : "text-gray-900"
             )}
             style={{ marginTop: "20px", marginBottom: "10px" }}
             >
               {title}
-            </h3>
+            </div>
           )}
           {description && (
-            <p className={cn(
+            <div className={cn(
               "code-block__description text-sm",
               theme === "dark" ? "text-gray-400" : "text-gray-600"
             )}
@@ -446,7 +446,7 @@ const CodeBlock: React.FC<CodeBlockProps> = ({ fields }) => {
             }}
             >
               {description}
-            </p>
+            </div>
           )}
         </div>
       )}

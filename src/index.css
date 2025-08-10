@@ -257,14 +257,6 @@
   font-weight: 600 !important;
 }
 
-/* Images */
-.page-post .post-content img:not([data-block-id]):not([data-block-id] *) {
-  max-width: 100% !important;
-  height: auto !important;
-  margin: 1.5rem 0 !important;
-  border-radius: 0.5rem !important;
-}
-
 /* Figure and figcaption */
 .page-post .post-content figure:not([data-block-id]):not([data-block-id] *) {
   margin: 2rem 0 !important;
