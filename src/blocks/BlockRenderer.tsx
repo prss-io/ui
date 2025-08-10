@@ -18,6 +18,7 @@ interface BlockRendererProps {
   specializedType?: string;
   content: any;
   id: string;
+  styles?: string;
   customBlockComponents?: Record<string, React.ComponentType<any>>;
 }
 
@@ -26,6 +27,7 @@ const BlockRenderer: React.FC<BlockRendererProps> = ({
   specializedType, 
   content, 
   id,
+  styles,
   customBlockComponents = {}
 }) => {
   // Merge static block components with custom ones, with custom taking precedence
@@ -38,9 +40,27 @@ const BlockRenderer: React.FC<BlockRendererProps> = ({
     console.warn(`No component found for block type: ${componentKey}`);
     return null;
   }
+
+  // Parse styles string to React CSSProperties object
+  const parseStyles = (stylesString: string): React.CSSProperties => {
+    if (!stylesString) return {};
+    
+    return stylesString.split(';').reduce((acc, style) => {
+      const [prop, value] = style.split(':').map(s => s.trim());
+      if (prop && value) {
+        // Convert kebab-case to camelCase for React
+        const camelCaseProp = prop.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase());
+        acc[camelCaseProp] = value;
+      }
+      return acc;
+    }, {} as React.CSSProperties);
+  };
   
   return (
-    <div data-block-id={id}>
+    <div 
+      data-block-id={id}
+      style={styles ? parseStyles(styles) : {}}
+    >
       <Component {...content} />
     </div>
   );
