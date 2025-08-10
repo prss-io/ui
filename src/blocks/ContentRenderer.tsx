@@ -32,6 +32,7 @@ const ContentRenderer: React.FC<ContentRendererProps> = ({ content, className, c
                 specializedType={block.specializedType}
                 content={block.content}
                 id={block.id}
+                styles={block.styles}
                 customBlockComponents={customBlockComponents}
               />
             );

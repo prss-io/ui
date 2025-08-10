@@ -1,0 +1,138 @@
+/* Accordion Block Styles - SSR-friendly with shadcn styling */
+
+/* Default state - content hidden */
+.accordion-content {
+  display: none;
+  background: hsl(var(--card));
+  padding: 1rem 0 1rem 0;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: hsl(var(--muted-foreground));
+  overflow: hidden;
+}
+
+/* Active state - content visible */
+.accordion-item.active .accordion-content {
+  display: block;
+}
+
+/* Chevron rotation for active state */
+.accordion-item.active .accordion-chevron {
+  transform: translateY(0.125rem) rotate(180deg);
+}
+
+/* Make title bold when accordion is active */
+.accordion-item.active .accordion-title {
+  font-weight: 700; /* font-bold equivalent */
+}
+
+/* Ensure smooth transitions matching shadcn */
+.accordion-chevron {
+  transition: transform 200ms ease;
+}
+
+.accordion-trigger:focus {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+}
+
+.accordion-title {
+  flex: 1;
+  text-align: left;
+  color: hsl(var(--foreground));
+}
+
+.accordion-icon {
+  color: hsl(var(--muted-foreground));
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+  transition: transform 0.2s ease-in-out;
+  pointer-events: none;
+}
+
+.accordion-content {
+  background: hsl(var(--card));
+  padding: 1rem 0 1rem 0;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: hsl(var(--muted-foreground));
+  overflow: hidden;
+}
+
+.accordion-content .prose {
+  color: hsl(var(--foreground));
+  max-width: none;
+}
+
+.accordion-content .prose h1,
+.accordion-content .prose h2,
+.accordion-content .prose h3,
+.accordion-content .prose h4,
+.accordion-content .prose h5,
+.accordion-content .prose h6 {
+  color: hsl(var(--foreground));
+  margin-top: 0;
+  margin-bottom: 0.75rem;
+}
+
+.accordion-content .prose p {
+  margin-bottom: 0.75rem;
+}
+
+.accordion-content .prose p:last-child {
+  margin-bottom: 0;
+}
+
+.accordion-content .prose a {
+  color: hsl(var(--primary));
+  text-decoration: underline;
+}
+
+.accordion-content .prose a:hover {
+  opacity: 0.8;
+}
+
+.accordion-content .prose ul,
+.accordion-content .prose ol {
+  margin: 0.75rem 0;
+  padding-left: 1.5rem;
+}
+
+.accordion-content .prose blockquote {
+  border-left: 4px solid hsl(var(--border));
+  padding-left: 1rem;
+  margin: 1rem 0;
+  font-style: italic;
+  color: hsl(var(--muted-foreground));
+}
+
+.accordion-content .prose code {
+  background: hsl(var(--muted));
+  padding: 0.125rem 0.25rem;
+  border-radius: 0.25rem;
+  font-size: 0.875em;
+}
+
+.accordion-content .prose pre {
+  background: hsl(var(--muted));
+  padding: 1rem 0 1rem 0;
+  border-radius: 0.5rem;
+  overflow-x: auto;
+  margin: 1rem 0;
+}
+
+.accordion-content .prose pre code {
+  background: none;
+  padding: 0;
+}
+
+/* Placeholder when no items */
+.accordion-placeholder {
+  text-align: center;
+  padding: 2rem;
+  color: hsl(var(--muted-foreground));
+  border: 2px dashed hsl(var(--border));
+  border-radius: 0.5rem;
+  font-style: italic;
+}

@@ -3,15 +3,15 @@ const TerserPlugin = require("terser-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 
-
 module.exports = {
   mode: "production",
   entry: {
-    index: "./src/index.ts"
+    index: "./src/index.ts",
+    "index-core": "./src/index-core.ts"
   },
   devtool: "source-map",
   output: {
-    filename: 'index.js',
+    filename: '[name].js',
     path: path.resolve(__dirname, 'build'),
     library: 'PRSS',
     libraryTarget: 'umd',
@@ -36,7 +36,7 @@ module.exports = {
       cacheGroups: {
         // Merge all the CSS into one file
         index: {
-          name: "index",
+          name: "blocks",
           test: /\.s?css$/,
           chunks: "all",
           minChunks: 1,
@@ -85,7 +85,7 @@ module.exports = {
   },
   plugins: [
     new MiniCssExtractPlugin({
-      filename: "index.css"
+      filename: "blocks.css"
     }),
   ]
 };

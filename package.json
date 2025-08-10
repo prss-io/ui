@@ -1,10 +1,10 @@
 {
   "name": "@prss/ui",
-  "version": "2.3.0",
+  "version": "2.5.0",
   "description": "PRSS UI Library",
   "main": "build/index.js",
   "scripts": {
-    "build": "node scripts/build.js",
+    "build": "webpack",
     "test": "jest",
     "prepare": "npm run build",
     "trypublish": "npm publish || true",
