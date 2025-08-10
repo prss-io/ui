@@ -510,10 +510,7 @@ function initCarouselNavigation() {
 }
 
 function initGalleryLightbox() {
-  const zoomableImages = document.querySelectorAll('img[data-action="zoom"]');
-  
-  if (zoomableImages.length === 0) return;
-  
+  // Create lightbox if it doesn't exist
   let lightbox = document.getElementById('gallery-lightbox');
   if (!lightbox) {
     lightbox = createLightboxModal();
@@ -529,7 +526,32 @@ function initGalleryLightbox() {
   const nextBtn = lightbox.querySelector('.gallery-lightbox-next') as HTMLElement;
   
   let currentIndex = 0;
-  let currentGalleryImages: NodeListOf<Element> = zoomableImages;
+  let currentGalleryImages: NodeListOf<Element>;
+  
+  // Use event delegation to handle all images with data-action="zoom"
+  document.addEventListener('click', function(e) {
+    const target = e.target as HTMLElement;
+    
+    // Check if the clicked element is an image with data-action="zoom"
+    if (target.tagName === 'IMG' && target.getAttribute('data-action') === 'zoom') {
+      e.preventDefault();
+      
+      const clickedImage = target as HTMLImageElement;
+      const galleryBox = clickedImage.closest('.gallery-box');
+      
+      if (galleryBox) {
+        // If image is in a gallery, show all gallery images
+        currentGalleryImages = galleryBox.querySelectorAll('img[data-action="zoom"]');
+        currentIndex = Array.from(currentGalleryImages).indexOf(clickedImage);
+      } else {
+        // If image is standalone, show all zoomable images on the page
+        currentGalleryImages = document.querySelectorAll('img[data-action="zoom"]');
+        currentIndex = Array.from(currentGalleryImages).indexOf(clickedImage);
+      }
+      
+      showLightbox(currentIndex);
+    }
+  });
   
   function createLightboxModal(): HTMLElement {
     const modal = document.createElement('div');
@@ -622,23 +644,6 @@ function initGalleryLightbox() {
     const prevIndex = (currentIndex - 1 + currentGalleryImages.length) % currentGalleryImages.length;
     showLightbox(prevIndex);
   }
-  
-  zoomableImages.forEach((image, index) => {
-    image.addEventListener('click', (e) => {
-      e.preventDefault();
-      
-      const galleryBox = image.closest('.gallery-box');
-      if (galleryBox) {
-        currentGalleryImages = galleryBox.querySelectorAll('img[data-action="zoom"]');
-        currentIndex = Array.from(currentGalleryImages).indexOf(image);
-      } else {
-        currentGalleryImages = zoomableImages;
-        currentIndex = index;
-      }
-      
-      showLightbox(currentIndex);
-    });
-  });
   
   closeBtn?.addEventListener('click', hideLightbox);
   
