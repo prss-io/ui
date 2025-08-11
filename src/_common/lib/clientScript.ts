@@ -1,7 +1,7 @@
 document.addEventListener('click', function(e) {
   const target = e.target as HTMLElement;
   
-  const accordionTrigger = target.closest('[data-accordion-trigger]');
+  const accordionTrigger = target.closest('.accordion-trigger');
   if (accordionTrigger) {
     handleAccordionClick(e);
   }
@@ -10,7 +10,7 @@ document.addEventListener('click', function(e) {
 document.addEventListener('keydown', function(e) {
   const target = e.target as HTMLElement;
   
-  const accordionTrigger = target.closest('[data-accordion-trigger]');
+  const accordionTrigger = target.closest('.accordion-trigger');
   if (accordionTrigger) {
     handleAccordionKeydown(e);
   }
@@ -684,7 +684,7 @@ function initGalleryLightbox() {
 
 function handleAccordionClick(e: Event) {
   const target = e.target as HTMLElement;
-  const triggerButton = target.closest('[data-accordion-trigger]') as HTMLButtonElement;
+  const triggerButton = target.closest('.accordion-trigger') as HTMLButtonElement;
   
   if (!triggerButton) {
     return;
@@ -697,17 +697,36 @@ function handleAccordionClick(e: Event) {
     return;
   }
   
-  const allowMultiple = accordion.getAttribute('data-allow-multiple') === 'true';
+  const behavior = accordion.getAttribute('data-behavior') || 'single';
+  const allowMultiple = behavior === 'multiple';
   const isCurrentlyActive = accordionItem.classList.contains('active');
   const titleSpan = triggerButton.querySelector('.accordion-title') as HTMLElement;
   
+  // Handle alwaysOpen behavior - no interaction allowed
+  if (behavior === 'alwaysOpen') {
+    return;
+  }
+  
+  // If clicking on an already active item, always close it (except for alwaysOpen)
+  if (isCurrentlyActive) {
+    accordionItem.classList.remove('active');
+    triggerButton.setAttribute('aria-expanded', 'false');
+    if (titleSpan && !allowMultiple) {
+      titleSpan.classList.remove('font-bold');
+      titleSpan.classList.add('font-medium');
+    }
+    return;
+  }
+  
+  // If we get here, we're opening an inactive item
   if (!allowMultiple) {
+    // Close all other accordion items first
     const allItems = accordion.querySelectorAll('[data-slot="accordion-item"]');
     
-    allItems.forEach(item => {
+    allItems.forEach((item, index) => {
       if (item !== accordionItem) {
         item.classList.remove('active');
-        const itemTrigger = item.querySelector('[data-accordion-trigger]') as HTMLButtonElement;
+        const itemTrigger = item.querySelector('.accordion-trigger') as HTMLButtonElement;
         const itemTitleSpan = itemTrigger?.querySelector('.accordion-title') as HTMLElement;
         if (itemTrigger) {
           itemTrigger.setAttribute('aria-expanded', 'false');
@@ -720,9 +739,10 @@ function handleAccordionClick(e: Event) {
     });
   }
   
+  // Open the current item
   accordionItem.classList.add('active');
   triggerButton.setAttribute('aria-expanded', 'true');
-  if (titleSpan) {
+  if (titleSpan && !allowMultiple) {
     titleSpan.classList.remove('font-medium');
     titleSpan.classList.add('font-bold');
   }

@@ -2,7 +2,7 @@
 
 /* Default state - content hidden */
 .accordion-content {
-  display: none;
+  display: none !important;
   background: hsl(var(--card));
   padding: 1rem 0 1rem 0;
   font-size: 0.875rem;
@@ -13,7 +13,7 @@
 
 /* Active state - content visible */
 .accordion-item.active .accordion-content {
-  display: block;
+  display: block !important;
 }
 
 /* Chevron rotation for active state */
@@ -34,6 +34,16 @@
 .accordion-trigger:focus {
   outline: 2px solid hsl(var(--ring));
   outline-offset: 2px;
+}
+
+/* Disabled state for always-open mode */
+.accordion-trigger:disabled {
+  cursor: default;
+  opacity: 1;
+}
+
+.accordion-trigger:disabled:hover {
+  background-color: transparent;
 }
 
 .accordion-title {
