@@ -118,7 +118,6 @@ const AccordionBlock: React.FC<AccordionBlockProps> = ({ fields }) => {
             >
               <button 
                 type="button"
-                data-slot="accordion-trigger"
                 className={`accordion-trigger w-full ${triggerPadding[size as keyof typeof triggerPadding]} text-left flex items-center justify-between hover:bg-opacity-50 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-inset ${variant === 'filled' ? 'bg-opacity-50' : ''}`}
                 aria-expanded={shouldBeActive ? "true" : "false"}
                 aria-controls={`accordion-content-${index}`}

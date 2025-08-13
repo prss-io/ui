@@ -1,12 +1,3 @@
-/* Article-friendly styles for professional publication appearance */
-/* Target: .page-post .post-content elements, avoiding blocks with data-block-id */
-
-.page-post .post-content {
-  /* Typography fundamentals */
-  line-height: 1.7 !important;
-  font-size: 1.125rem !important; /* 18px base for better readability */
-}
-
 /* Headings with proper hierarchy and spacing */
 .page-post .post-content h1 {
   font-size: 2.25rem !important; /* 36px */
@@ -17,9 +8,9 @@
 }
 
 /* Override for elements inside blocks */
-.page-post .post-content div[data-block-id] h1 {
+/* .page-post .post-content div[data-block-id] h1 {
   all: revert !important;
-}
+} */
 
 .page-post .post-content h2 {
   font-size: 1.875rem !important; /* 30px */
@@ -29,9 +20,9 @@
   margin-bottom: 1.25rem !important;
 }
 
-.page-post .post-content div[data-block-id] h2 {
+/* .page-post .post-content div[data-block-id] h2 {
   all: revert !important;
-}
+} */
 
 .page-post .post-content h3 {
   font-size: 1.5rem !important; /* 24px */
@@ -88,9 +79,9 @@
   line-height: 1.7 !important;
 }
 
-.page-post .post-content div[data-block-id] p {
+/* .page-post .post-content div[data-block-id] p {
   all: revert !important;
-}
+} */
 
 /* First paragraph after headings - reduce top margin */
 .page-post .post-content h1 + p,
@@ -102,14 +93,14 @@
   margin-top: 0 !important;
 }
 
-.page-post .post-content div[data-block-id] h1 + p,
+/* .page-post .post-content div[data-block-id] h1 + p,
 .page-post .post-content div[data-block-id] h2 + p,
 .page-post .post-content div[data-block-id] h3 + p,
 .page-post .post-content div[data-block-id] h4 + p,
 .page-post .post-content div[data-block-id] h5 + p,
 .page-post .post-content div[data-block-id] h6 + p {
   all: revert !important;
-}
+} */
 
 /* Lists with proper styling and spacing */
 .page-post .post-content ul,

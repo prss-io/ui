@@ -66,7 +66,7 @@ const CardBlock: React.FC<CardBlockProps> = ({ fields }) => {
             />
           </div>
         )}
-        <div className="card-block__content">
+        <div className="card-block__content ml-2">
           <CardHeader className="card-block__header">
             <CardTitle 
               className="card-block__title"

@@ -99,7 +99,7 @@ const TimelineBlock: React.FC<TimelineBlockProps> = ({ fields }) => {
               <Card key={index} className="flex-shrink-0 w-72">
                 <div className="p-6">
                   <div className="space-y-3">
-                    <Badge variant="secondary">
+                    <Badge variant="outline">
                       {event.date}
                     </Badge>
                     <h4 className="text-lg font-semibold">
@@ -153,7 +153,7 @@ const TimelineBlock: React.FC<TimelineBlockProps> = ({ fields }) => {
                         />
                         
                         <div className="space-y-3">
-                          <Badge variant="secondary">
+                          <Badge variant="outline">
                             {event.date}
                           </Badge>
                           <h4 className="text-xl font-semibold md:text-2xl">

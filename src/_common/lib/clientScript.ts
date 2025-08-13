@@ -1,27 +1,27 @@
-document.addEventListener('click', function(e) {
-  const target = e.target as HTMLElement;
-  
-  const accordionTrigger = target.closest('.accordion-trigger');
-  if (accordionTrigger) {
-    handleAccordionClick(e);
-  }
-});
-
-document.addEventListener('keydown', function(e) {
-  const target = e.target as HTMLElement;
-  
-  const accordionTrigger = target.closest('.accordion-trigger');
-  if (accordionTrigger) {
-    handleAccordionKeydown(e);
-  }
-});
-
 document.addEventListener('DOMContentLoaded', function() {
   initCodeBlockCopyFunctionality();
   initGalleryLightbox();
   initCarouselNavigation();
   initBlockAnimations();
+  initAccordionEventListeners();
 });
+
+function initAccordionEventListeners() {
+  // Find all accordion triggers and attach direct event listeners
+  const accordionTriggers = document.querySelectorAll('.accordion-trigger');
+  
+  accordionTriggers.forEach(trigger => {
+    const triggerElement = trigger as HTMLButtonElement;
+    
+    // Remove any existing listeners to prevent duplicates
+    triggerElement.removeEventListener('click', handleAccordionClick);
+    triggerElement.removeEventListener('keydown', handleAccordionKeydown);
+    
+    // Attach direct event listeners
+    triggerElement.addEventListener('click', handleAccordionClick);
+    triggerElement.addEventListener('keydown', handleAccordionKeydown);
+  });
+}
 
 document.querySelectorAll(".post-inner-content img")?.forEach((img) => {
   if (img && !img.classList.contains("no-zoom") && img.getAttribute("data-action") !== "none") {
@@ -683,8 +683,10 @@ function initGalleryLightbox() {
 }
 
 function handleAccordionClick(e: Event) {
-  const target = e.target as HTMLElement;
-  const triggerButton = target.closest('.accordion-trigger') as HTMLButtonElement;
+  e.preventDefault();
+  e.stopPropagation();
+  
+  const triggerButton = e.currentTarget as HTMLButtonElement;
   
   if (!triggerButton) {
     return;
@@ -761,6 +763,7 @@ if (typeof window !== 'undefined') {
     initGalleryLightbox,
     initCarouselNavigation,
     initBlockAnimations,
+    initAccordionEventListeners,
     handleAccordionClick,
     handleAccordionKeydown
   };
