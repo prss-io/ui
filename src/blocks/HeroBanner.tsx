@@ -61,14 +61,14 @@ const HeroBanner: React.FC<HeroBannerProps> = ({ fields }) => {
       )}
       <CardContent className={`relative p-5 flex flex-col ${getAlignmentClasses(alignment)}`} style={{ color: textColor }}>
         {title && (
-          <h1 className="mb-4 text-4xl font-bold" style={{
+          <div className="mb-4 text-4xl font-bold" style={{
             textShadow: '1px 1px 3px rgba(0, 0, 0, 0.2)',
             padding: "0 20px 0 20px",
             color: textColor
-          }}>{title}</h1>
+          }}>{title}</div>
         )}
         {subtitle && (
-          <p className="mb-8" style={{ color: textColor }}>{subtitle}</p>
+          <div className="mb-6 mt-4" style={{ color: textColor }}>{subtitle}</div>
         )}
         {buttonText && buttonUrl && (
           <Button variant="outline" asChild>

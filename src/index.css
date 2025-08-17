@@ -1,4 +1,5 @@
 /* Headings with proper hierarchy and spacing */
+.page-docs .post-content h1,
 .page-post .post-content h1 {
   /* font-size: 2.25rem !important;
   font-weight: 700 !important;
@@ -8,10 +9,12 @@
 }
 
 /* Override for elements inside blocks */
-/* .page-post .post-content div[data-block-id] h1 {
+/* .page-docs .post-content div[data-block-id] h1,
+.page-post .post-content div[data-block-id] h1 {
   all: revert !important;
 } */
 
+.page-docs .post-content h2,
 .page-post .post-content h2 {
   font-size: 1.875rem !important; /* 30px */
   font-weight: 600 !important;
@@ -20,10 +23,12 @@
   margin-bottom: 1.25rem !important;
 }
 
-/* .page-post .post-content div[data-block-id] h2 {
+/* .page-docs .post-content div[data-block-id] h2,
+.page-post .post-content div[data-block-id] h2 {
   all: revert !important;
 } */
 
+.page-docs .post-content h3,
 .page-post .post-content h3 {
   font-size: 1.5rem !important; /* 24px */
   font-weight: 600 !important;
@@ -32,10 +37,12 @@
   margin-bottom: 1rem !important;
 }
 
+.page-docs .post-content div[data-block-id] h3,
 .page-post .post-content div[data-block-id] h3 {
   all: revert !important;
 }
 
+.page-docs .post-content h4,
 .page-post .post-content h4 {
   font-size: 1.25rem !important; /* 20px */
   font-weight: 600 !important;
@@ -44,10 +51,12 @@
   margin-bottom: 0.875rem !important;
 }
 
+.page-docs .post-content div[data-block-id] h4,
 .page-post .post-content div[data-block-id] h4 {
   all: revert !important;
 }
 
+.page-docs .post-content h5,
 .page-post .post-content h5 {
   font-size: 1.125rem !important; /* 18px */
   font-weight: 600 !important;
@@ -56,10 +65,12 @@
   margin-bottom: 0.75rem !important;
 }
 
+.page-docs .post-content div[data-block-id] h5,
 .page-post .post-content div[data-block-id] h5 {
   all: revert !important;
 }
 
+.page-docs .post-content h6,
 .page-post .post-content h6 {
   font-size: 1rem !important; /* 16px */
   font-weight: 600 !important;
@@ -68,42 +79,59 @@
   margin-bottom: 0.625rem !important;
 }
 
+.page-docs .post-content div[data-block-id] h6,
 .page-post .post-content div[data-block-id] h6 {
   all: revert !important;
 }
 
 /* Paragraphs with optimal spacing */
+.page-docs .post-content p,
 .page-post .post-content p {
   margin-top: 0 !important;
   margin-bottom: 1.5rem !important;
   line-height: 1.7 !important;
 }
 
-/* .page-post .post-content div[data-block-id] p {
+/* .page-docs .post-content div[data-block-id] p,
+.page-post .post-content div[data-block-id] p {
   all: revert !important;
 } */
 
 /* First paragraph after headings - reduce top margin */
+.page-docs .post-content h1 + p,
 .page-post .post-content h1 + p,
+.page-docs .post-content h2 + p,
 .page-post .post-content h2 + p,
+.page-docs .post-content h3 + p,
 .page-post .post-content h3 + p,
+.page-docs .post-content h4 + p,
 .page-post .post-content h4 + p,
+.page-docs .post-content h5 + p,
 .page-post .post-content h5 + p,
+.page-docs .post-content h6 + p,
 .page-post .post-content h6 + p {
   margin-top: 0 !important;
 }
 
-/* .page-post .post-content div[data-block-id] h1 + p,
+/* .page-docs .post-content div[data-block-id] h1 + p,
+.page-post .post-content div[data-block-id] h1 + p,
+.page-docs .post-content div[data-block-id] h2 + p,
 .page-post .post-content div[data-block-id] h2 + p,
+.page-docs .post-content div[data-block-id] h3 + p,
 .page-post .post-content div[data-block-id] h3 + p,
+.page-docs .post-content div[data-block-id] h4 + p,
 .page-post .post-content div[data-block-id] h4 + p,
+.page-docs .post-content div[data-block-id] h5 + p,
 .page-post .post-content div[data-block-id] h5 + p,
+.page-docs .post-content div[data-block-id] h6 + p,
 .page-post .post-content div[data-block-id] h6 + p {
   all: revert !important;
 } */
 
 /* Lists with proper styling and spacing */
+.page-docs .post-content ul,
 .page-post .post-content ul,
+.page-docs .post-content ol,
 .page-post .post-content ol {
   margin-top: 0 !important;
   margin-bottom: 1.5rem !important;
@@ -111,61 +139,78 @@
   line-height: 1.6 !important;
 }
 
+.page-docs .post-content div[data-block-id] ul,
 .page-post .post-content div[data-block-id] ul,
+.page-docs .post-content div[data-block-id] ol,
 .page-post .post-content div[data-block-id] ol {
   all: revert !important;
 }
 
+.page-docs .post-content ul,
 .page-post .post-content ul {
   list-style-type: disc !important;
 }
 
+.page-docs .post-content div[data-block-id] ul,
 .page-post .post-content div[data-block-id] ul {
   list-style-type: revert !important;
 }
 
+.page-docs .post-content ol,
 .page-post .post-content ol {
   list-style-type: decimal !important;
 }
 
+.page-docs .post-content div[data-block-id] ol,
 .page-post .post-content div[data-block-id] ol {
   list-style-type: revert !important;
 }
 
+.page-docs .post-content li,
 .page-post .post-content li {
   margin-bottom: 0.5rem !important;
 }
 
+.page-docs .post-content div[data-block-id] li,
 .page-post .post-content div[data-block-id] li {
   all: revert !important;
 }
 
+.page-docs .post-content li:last-child,
 .page-post .post-content li:last-child {
   margin-bottom: 0 !important;
 }
 
+.page-docs .post-content div[data-block-id] li:last-child,
 .page-post .post-content div[data-block-id] li:last-child {
   margin-bottom: revert !important;
 }
 
 /* Nested lists */
+.page-docs .post-content ul ul:not(div[data-block-id] *),
 .page-post .post-content ul ul:not(div[data-block-id] *),
+.page-docs .post-content ol ol:not(div[data-block-id] *),
 .page-post .post-content ol ol:not(div[data-block-id] *),
+.page-docs .post-content ul ol:not(div[data-block-id] *),
 .page-post .post-content ul ol:not(div[data-block-id] *),
+.page-docs .post-content ol ul:not(div[data-block-id] *),
 .page-post .post-content ol ul:not(div[data-block-id] *) {
   margin-top: 0.5rem !important;
   margin-bottom: 0.5rem !important;
 }
 
+.page-docs .post-content ul ul:not(div[data-block-id] *),
 .page-post .post-content ul ul:not(div[data-block-id] *) {
   list-style-type: circle !important;
 }
 
+.page-docs .post-content ul ul ul:not(div[data-block-id] *),
 .page-post .post-content ul ul ul:not(div[data-block-id] *) {
   list-style-type: square !important;
 }
 
 /* Blockquotes */
+.page-docs .post-content blockquote:not(div[data-block-id] *),
 .page-post .post-content blockquote:not(div[data-block-id] *) {
   margin: 2rem 0 !important;
   padding: 1.5rem 2rem !important;
@@ -174,15 +219,18 @@
   line-height: 1.6 !important;
 }
 
+.page-docs .post-content blockquote p:not(div[data-block-id] *),
 .page-post .post-content blockquote p:not(div[data-block-id] *) {
   margin-bottom: 1rem !important;
 }
 
+.page-docs .post-content blockquote p:last-child:not(div[data-block-id] *),
 .page-post .post-content blockquote p:last-child:not(div[data-block-id] *) {
   margin-bottom: 0 !important;
 }
 
 /* Links */
+.page-docs .post-content a:not(div[data-block-id] *),
 .page-post .post-content a:not(div[data-block-id] *) {
   text-decoration: underline !important;
   text-underline-offset: 3px !important;
@@ -190,15 +238,18 @@
 }
 
 /* Emphasis and strong */
+.page-docs .post-content em:not(div[data-block-id] *),
 .page-post .post-content em:not(div[data-block-id] *) {
   font-style: italic !important;
 }
 
+.page-docs .post-content strong:not([data-block-id]):not([data-block-id] *),
 .page-post .post-content strong:not([data-block-id]):not([data-block-id] *) {
   font-weight: 600 !important;
 }
 
 /* Code elements */
+.page-docs .post-content code:not([data-block-id]):not([data-block-id] *),
 .page-post .post-content code:not([data-block-id]):not([data-block-id] *) {
   font-family: 'SFMono-Regular', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace !important;
   font-size: 0.875rem !important;
@@ -207,6 +258,7 @@
 }
 
 /* Pre-formatted text */
+.page-docs .post-content pre:not([data-block-id]):not([data-block-id] *),
 .page-post .post-content pre:not([data-block-id]):not([data-block-id] *) {
   font-family: 'SFMono-Regular', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace !important;
   font-size: 0.875rem !important;
@@ -217,11 +269,13 @@
   overflow-x: auto !important;
 }
 
+.page-docs .post-content pre code:not([data-block-id]):not([data-block-id] *),
 .page-post .post-content pre code:not([data-block-id]):not([data-block-id] *) {
   padding: 0 !important;
 }
 
 /* Horizontal rules */
+.page-docs .post-content hr:not([data-block-id]):not([data-block-id] *),
 .page-post .post-content hr:not([data-block-id]):not([data-block-id] *) {
   margin: 3rem 0 !important;
   border: none !important;
@@ -229,6 +283,7 @@
 }
 
 /* Tables */
+.page-docs .post-content table:not([data-block-id]):not([data-block-id] *),
 .page-post .post-content table:not([data-block-id]):not([data-block-id] *) {
   width: 100% !important;
   margin: 2rem 0 !important;
@@ -237,22 +292,27 @@
   font-size: 0.95rem !important;
 }
 
+.page-docs .post-content th:not([data-block-id]):not([data-block-id] *),
 .page-post .post-content th:not([data-block-id]):not([data-block-id] *),
+.page-docs .post-content td:not([data-block-id]):not([data-block-id] *),
 .page-post .post-content td:not([data-block-id]):not([data-block-id] *) {
   padding: 0.75rem 1rem !important;
   text-align: left !important;
   vertical-align: top !important;
 }
 
+.page-docs .post-content th:not([data-block-id]):not([data-block-id] *),
 .page-post .post-content th:not([data-block-id]):not([data-block-id] *) {
   font-weight: 600 !important;
 }
 
 /* Figure and figcaption */
+.page-docs .post-content figure:not([data-block-id]):not([data-block-id] *),
 .page-post .post-content figure:not([data-block-id]):not([data-block-id] *) {
   margin: 2rem 0 !important;
 }
 
+.page-docs .post-content figcaption:not([data-block-id]):not([data-block-id] *),
 .page-post .post-content figcaption:not([data-block-id]):not([data-block-id] *) {
   margin-top: 0.75rem !important;
   font-size: 0.875rem !important;
@@ -260,16 +320,8 @@
   font-style: italic !important;
 }
 
-/* Ensure proper spacing between different elements */
-.page-post .post-content > *:first-child:not([data-block-id]):not([data-block-id] *) {
-  margin-top: 0 !important;
-}
-
-.page-post .post-content > *:last-child:not([data-block-id]):not([data-block-id] *) {
-  margin-bottom: 0 !important;
-}
-
 /* Drop caps for first paragraph (optional enhancement) */
+.page-docs .post-content > p:first-of-type:not([data-block-id]):not([data-block-id] *)::first-letter,
 .page-post .post-content > p:first-of-type:not([data-block-id]):not([data-block-id] *)::first-letter {
   float: left !important;
   font-size: 4rem !important;
@@ -281,30 +333,36 @@
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
+  .page-docs .post-content,
   .page-post .post-content {
     font-size: 1rem !important;
   }
   
+  .page-docs .post-content h1:not([data-block-id]):not([data-block-id] *),
   .page-post .post-content h1:not([data-block-id]):not([data-block-id] *) {
     font-size: 1.875rem !important;
     margin-top: 2rem !important;
   }
   
+  .page-docs .post-content h2:not([data-block-id]):not([data-block-id] *),
   .page-post .post-content h2:not([data-block-id]):not([data-block-id] *) {
     font-size: 1.5rem !important;
     margin-top: 1.75rem !important;
   }
   
+  .page-docs .post-content h3:not([data-block-id]):not([data-block-id] *),
   .page-post .post-content h3:not([data-block-id]):not([data-block-id] *) {
     font-size: 1.25rem !important;
     margin-top: 1.5rem !important;
   }
   
+  .page-docs .post-content blockquote:not([data-block-id]):not([data-block-id] *),
   .page-post .post-content blockquote:not([data-block-id]):not([data-block-id] *) {
     padding: 1rem 1.5rem !important;
     margin: 1.5rem 0 !important;
   }
   
+  .page-docs .post-content > p:first-of-type:not([data-block-id]):not([data-block-id] *)::first-letter,
   .page-post .post-content > p:first-of-type:not([data-block-id]):not([data-block-id] *)::first-letter {
     font-size: 3rem !important;
     line-height: 2.5rem !important;
@@ -313,4 +371,9 @@
 
 .hidden {
   display: none !important;
+}
+
+.page-docs .post-content :first-child:not(div),
+.page-post .post-content :first-child:not(div) {
+  margin-top: 0 !important;
 }
