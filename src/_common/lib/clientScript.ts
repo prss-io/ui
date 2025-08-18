@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
   initCarouselNavigation();
   initBlockAnimations();
   initAccordionEventListeners();
+  initMobileMenuFunctionality();
 });
 
 function initAccordionEventListeners() {
@@ -21,6 +22,67 @@ function initAccordionEventListeners() {
     triggerElement.addEventListener('click', handleAccordionClick);
     triggerElement.addEventListener('keydown', handleAccordionKeydown);
   });
+}
+
+function initMobileMenuFunctionality() {
+  // Handle mobile menu visibility based on screen size and toggle state
+  const mobileMenuToggles = document.querySelectorAll('[data-mobile-menu-toggle]');
+  const mobileMenus = document.querySelectorAll('[data-mobile-menu]');
+
+  // Function to check if we're on mobile
+  const isMobile = () => window.innerWidth < 992;
+
+  // Function to update menu visibility
+  const updateMenuVisibility = () => {
+    mobileMenus.forEach(menu => {
+      const toggle = document.querySelector(`[data-mobile-menu-toggle="${menu.getAttribute('data-mobile-menu')}"]`);
+      const isToggled = toggle?.getAttribute('data-mobile-menu-open') === 'true';
+      
+      if (isMobile()) {
+        // On mobile, show/hide based on toggle state
+        menu.classList.toggle('hidden', !isToggled);
+      } else {
+        // On desktop, always show
+        menu.classList.remove('hidden');
+      }
+    });
+  };
+
+  // Handle toggle button clicks
+  mobileMenuToggles.forEach(toggle => {
+    toggle.addEventListener('click', () => {
+      const targetId = toggle.getAttribute('data-mobile-menu-toggle');
+      const isOpen = toggle.getAttribute('data-mobile-menu-open') === 'true';
+      
+      // Update toggle state
+      toggle.setAttribute('data-mobile-menu-open', (!isOpen).toString());
+      
+      // Update chevron rotation
+      const chevron = toggle.querySelector('.mobile-menu-chevron');
+      if (chevron) {
+        chevron.classList.toggle('rotate-180', !isOpen);
+      }
+      
+      // Update menu visibility
+      updateMenuVisibility();
+    });
+  });
+
+  // Handle window resize with debouncing for performance
+  let resizeTimeout: number;
+  window.addEventListener('resize', () => {
+    // Update immediately for instant feedback
+    updateMenuVisibility();
+    
+    // Also debounce for any cleanup operations
+    clearTimeout(resizeTimeout);
+    resizeTimeout = window.setTimeout(() => {
+      updateMenuVisibility();
+    }, 250);
+  });
+  
+  // Initial setup
+  updateMenuVisibility();
 }
 
 document.querySelectorAll(".post-inner-content img")?.forEach((img) => {

@@ -5,3 +5,4 @@ export * from './core';
 
 // Export components
 export { default as ContentRenderer } from './blocks/ContentRenderer';
+export { default as Menu } from './_common/components/Menu';

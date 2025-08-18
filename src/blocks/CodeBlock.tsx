@@ -14,6 +14,7 @@ interface CodeBlockProps {
     highlightLines?: string; // Format: "1,3-5,8" - supports individual lines and ranges
     fileName?: string;
     showCopyButton?: string | boolean;
+    showHeader?: string | boolean;
   };
 }
 
@@ -28,6 +29,7 @@ const CodeBlock: React.FC<CodeBlockProps> = ({ fields }) => {
     highlightLines = "",
     fileName,
     showCopyButton = true,
+    showHeader = true,
   } = fields;
 
   // Note: Copy functionality is handled by client-side script
@@ -36,6 +38,7 @@ const CodeBlock: React.FC<CodeBlockProps> = ({ fields }) => {
   // Convert string booleans to actual booleans
   const shouldShowLineNumbers = showLineNumbers === "true" || showLineNumbers === true;
   const shouldShowCopyButton = showCopyButton === "true" || showCopyButton === true;
+  const shouldShowHeader = showHeader === "true" || showHeader === true;
 
   const handleCopy = async () => {
     // Copy functionality is now handled by the client script
@@ -402,7 +405,7 @@ const CodeBlock: React.FC<CodeBlockProps> = ({ fields }) => {
       "code-block rounded-lg overflow-hidden my-2",
       theme === "dark" ? "code-block--dark bg-gray-900 border-gray-700" : "code-block--light bg-gray-50 border border-gray-200"
     )}>
-      {(title || description || fileName || language) && (
+      {shouldShowHeader && (title || description || fileName || language) && (
         <div className={cn(
           "code-block__header p-4 border-b",
           theme === "dark" ? "bg-gray-800 border-gray-700" : "bg-gray-100 border-gray-200"

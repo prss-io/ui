@@ -93,12 +93,12 @@
 
 /* Light theme syntax highlighting */
 .code-block--light .token-keyword {
-  color: #d73a90;
+  color: #07a;
   font-weight: 600;
 }
 
 .code-block--light .token-string {
-  color: #8f530f;
+  color: #690;
 }
 
 .code-block--light .token-comment {
@@ -111,7 +111,7 @@
 }
 
 .code-block--light .token-function {
-  color: #163ec2;
+  color: #dd4a68;
   font-weight: 500;
 }
 
@@ -179,4 +179,8 @@
     padding-right: 0.5rem;
     font-size: 0.75rem;
   }
+}
+
+pre.code-block__pre {
+  margin-bottom: 0px !important;
 }

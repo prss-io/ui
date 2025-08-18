@@ -1,3 +1,6 @@
+/* Import Menu component styles */
+@import './_common/components/Menu.css';
+
 /* Headings with proper hierarchy and spacing */
 .page-docs .post-content h1,
 .page-post .post-content h1 {
@@ -230,8 +233,8 @@
 }
 
 /* Links */
-.page-docs .post-content a:not(div[data-block-id] *),
-.page-post .post-content a:not(div[data-block-id] *) {
+.page-docs .post-content a:not(.btn):not(div[data-block-id] *),
+.page-post .post-content a:not(.btn):not(div[data-block-id] *) {
   text-decoration: underline !important;
   text-underline-offset: 3px !important;
   transition: all 0.2s ease !important;
@@ -373,7 +376,40 @@
   display: none !important;
 }
 
-.page-docs .post-content :first-child:not(div),
-.page-post .post-content :first-child:not(div) {
+/* Sidebar menu width styling */
+/* @media (min-width: 1024px) {
+  .sidebar-menu {
+    width: 180px !important;
+    min-width: 180px !important;
+  }
+} */
+
+.page-docs .post-content :first-child:not(div):not(img),
+.page-post .post-content :first-child:not(div):not(img) {
   margin-top: 0 !important;
+}
+
+.page iframe {
+  outline: none !important;
+}
+
+.page-docs .post-content img[style],
+.page-post .post-content img[style] {
+  display: inline-block;
+}
+
+.page-docs .post-content p img,
+.page-post .post-content p img {
+  display: initial;
+}
+
+.page-docs .docs-image {
+  max-width: 350px;
+  width: 100%;
+  height: auto;
+}
+
+.page-docs .content-footer {
+  padding: 0 !important;
+  margin: 0 !important;
 }
