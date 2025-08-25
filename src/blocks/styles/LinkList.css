@@ -8,10 +8,7 @@
 
 /* Styled variant */
 .link-list--styled {
-  border: 1px solid var(--border-color, hsl(var(--border)));
-  border-radius: 8px;
-  padding: 16px;
-  background-color: var(--background-color, hsl(var(--background)));
+
 }
 
 /* Minimal variant */
@@ -176,7 +173,7 @@
 .link-item-header {
   display: flex;
   align-items: flex-start;
-  gap: 12px;
+  gap: 8px;
 }
 
 /* Icon position variants */
@@ -234,7 +231,6 @@
 
 .link-item-icon--left,
 .link-item-icon--right {
-  margin-top: 2px;
   width: 20px;
   height: 20px;
 }

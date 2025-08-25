@@ -8,7 +8,7 @@ interface LinkItem {
   description?: string;
   url?: string;
   icon?: string;
-  openInNewTab?: boolean;
+  openInNewTab?: boolean | string;
 }
 
 interface LinkListProps {
@@ -88,10 +88,16 @@ const LinkList: React.FC<LinkListProps> = ({ fields }) => {
 
   const renderLink = (link: LinkItem, index: number) => {
     const hasUrl = link.url && link.url.trim() !== '';
+    
+    // Handle both boolean and string formats for openInNewTab
+    const shouldOpenInNewTab = typeof link.openInNewTab === 'string' 
+      ? link.openInNewTab === 'new' 
+      : link.openInNewTab;
+    
     const linkProps = hasUrl ? {
       href: link.url,
-      target: link.openInNewTab ? "_blank" : undefined,
-      rel: link.openInNewTab ? "noopener noreferrer" : undefined,
+      target: shouldOpenInNewTab ? "_blank" : undefined,
+      rel: shouldOpenInNewTab ? "noopener noreferrer" : undefined,
     } : {};
 
     const linkContent = (
