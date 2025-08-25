@@ -5,6 +5,7 @@ import Gallery from "./Gallery";
 import CardBlock from "./CardBlock";
 import AccordionBlock from "./AccordionBlock";
 import TimelineBlock from "./TimelineBlock";
+import LinkList from "./LinkList";
 import AnimatedWrapper from "./AnimatedWrapper";
 
 // Registry of block components
@@ -15,6 +16,7 @@ const blockComponents = {
   card: CardBlock,
   accordion: AccordionBlock,
   timeline: TimelineBlock,
+  "link-list": LinkList,
   // Add more block types here as needed
 };
 
