@@ -141,7 +141,7 @@ const Gallery: React.FC<GalleryProps> = ({ fields }) => {
               <img
                 key={index}
                 src={image.thumbnail || image.url}
-                alt={image.alt || `Gallery image ${index + 1}`}
+                alt={image.alt || ""}
                 className={imageClass || undefined}
                 data-action={dataAction}
                 data-gallery-url={image.url}
