@@ -175,6 +175,7 @@ h3.gallery-lightbox-title,
 p.gallery-lightbox-caption-text {
   color: white;
   margin-bottom: 0 !important;
+  margin-top: 0 !important;
 }
 
 .gallery-lightbox-image {

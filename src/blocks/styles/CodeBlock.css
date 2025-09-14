@@ -184,3 +184,7 @@
 pre.code-block__pre {
   margin-bottom: 0px !important;
 }
+
+.code-block--dark pre.code-block__pre {
+  background-color: var(--color-gray-900) !important;
+}
