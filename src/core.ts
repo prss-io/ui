@@ -3,8 +3,8 @@ let bufferItem = null;
 let items = null;
 let isDeployment = false;
 
-export const init = (data, isDeploymentFlag = false) => {
-    isDeployment = isDeploymentFlag;
+export const init = (data, isDeploymentFlag?) => {
+    isDeployment = (window as any).PRSSDeployMode ?? isDeploymentFlag === "deploy";
     if(data) {
         bufferItem = data;
     } else {
