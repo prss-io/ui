@@ -1,8 +1,10 @@
 // Shared core utilities for PRSS
 let bufferItem = null;
 let items = null;
+let isDeployment = false;
 
-export const init = (data) => {
+export const init = (data, isDeploymentFlag = false) => {
+    isDeployment = isDeploymentFlag;
     if(data) {
         bufferItem = data;
     } else {
@@ -48,7 +50,11 @@ export const getSiteUrl = () => {
     if(siteUrl){
         return siteUrl.replaceAll("localhost:9000", "localhost:3000");
     } else {
-        return "http://localhost:3000";
+        if(isDeployment){
+            return "/";
+        } else {
+            return "http://localhost:3000";
+        }
     }
 };
 
