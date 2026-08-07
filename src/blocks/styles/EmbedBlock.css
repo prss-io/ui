@@ -1,0 +1,80 @@
+/* EmbedBlock — theme-inheriting framed iframe with a full-screen overlay mode.
+   Colours use currentColor / color-mix so it adapts to any host theme. */
+.embed-block {
+  margin: 0 0 24px;
+  border: 1px solid color-mix(in srgb, currentColor 15%, transparent);
+  border-radius: 12px;
+  overflow: hidden;
+  background: color-mix(in srgb, currentColor 3%, transparent);
+}
+
+.embed-block__toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 10px 12px;
+  border-bottom: 1px solid color-mix(in srgb, currentColor 12%, transparent);
+}
+.embed-block__meta { display: flex; flex-direction: column; min-width: 0; }
+.embed-block__title { font-size: 0.9rem; font-weight: 650; line-height: 1.3; }
+.embed-block__desc { font-size: 0.78rem; opacity: 0.65; margin-top: 2px; }
+
+.embed-block__actions { display: flex; align-items: center; gap: 8px; }
+.embed-block__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  padding: 0 12px;
+  border: 1px solid color-mix(in srgb, currentColor 20%, transparent);
+  border-radius: 8px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  line-height: 1;
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+.embed-block__btn:hover {
+  background: color-mix(in srgb, currentColor 8%, transparent);
+  border-color: color-mix(in srgb, currentColor 35%, transparent);
+}
+
+.embed-block__frame { width: 100%; }
+.embed-block__frame iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: #fff;
+}
+
+/* Full-screen overlay (toggled by the client script). */
+.embed-block.is-expanded {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg, #fff);
+}
+.embed-block.is-expanded .embed-block__frame {
+  flex: 1;
+  height: auto !important;
+  aspect-ratio: auto !important;
+}
+body.embed-block-open { overflow: hidden; }
+
+@media (max-width: 640px) {
+  .embed-block__toolbar { align-items: flex-start; }
+  .embed-block__actions { width: 100%; justify-content: flex-end; }
+}

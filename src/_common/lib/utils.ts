@@ -57,6 +57,7 @@ export const parseBlockElements = (htmlContent: string) => {
         element.outerHTML = `<div data-block-placeholder="__BLOCK_${blocks.length - 1}__"></div>`;
       } catch (error) {
         console.error('Failed to parse block data:', error);
+        console.error('Content:', contentAttr);
       }
     }
   });

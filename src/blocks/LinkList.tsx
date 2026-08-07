@@ -41,11 +41,11 @@ const LinkList: React.FC<LinkListProps> = ({ fields }) => {
     iconPosition = "left",
     showDescriptions = true,
     showIcons = true,
-    backgroundColor = "#ffffff",
-    borderColor = "#e5e5e5",
-    textColor = "#333333",
-    linkColor = "#3b82f6",
-    hoverColor = "#2563eb",
+    backgroundColor,
+    borderColor,
+    textColor,
+    linkColor,
+    hoverColor,
     borderRadius = "8px",
     spacing = "medium",
   } = fields;
@@ -150,12 +150,12 @@ const LinkList: React.FC<LinkListProps> = ({ fields }) => {
   };
 
   const containerStyles = layoutStyle === "styled" ? {
-    backgroundColor: backgroundColor !== "transparent" ? backgroundColor : undefined,
-    borderColor,
-    borderRadius,
-    '--link-color': linkColor,
-    '--hover-color': hoverColor,
-    '--text-color': textColor,
+    ...(backgroundColor && backgroundColor !== "transparent" ? { backgroundColor } : {}),
+    ...(borderColor ? { borderColor } : {}),
+    ...(borderRadius ? { borderRadius } : {}),
+    ...(linkColor ? { '--link-color': linkColor } : {}),
+    ...(hoverColor ? { '--hover-color': hoverColor } : {}),
+    ...(textColor ? { '--text-color': textColor } : {}),
   } as React.CSSProperties : {};
 
   return (

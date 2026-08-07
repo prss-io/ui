@@ -25,21 +25,22 @@
   font-size: 1.5rem;
   font-weight: 600;
   margin: 0 0 8px 0;
-  color: var(--text-color, hsl(var(--foreground)));
+  color: var(--text-color, currentColor);
 }
 
 .link-list-description {
   font-size: 0.875rem;
-  color: var(--text-color, hsl(var(--muted-foreground)));
+  color: var(--text-color, currentColor);
   margin: 0;
-  opacity: 0.8;
+  opacity: 0.7;
 }
 
 /* Empty state */
 .link-list-empty {
   text-align: center;
   padding: 32px 16px;
-  color: hsl(var(--muted-foreground));
+  color: currentColor;
+  opacity: 0.7;
   font-style: italic;
 }
 
@@ -74,6 +75,18 @@
   flex-wrap: wrap;
   gap: 12px;
 }
+
+/* Inline orientation: keep the label on the same row as the chips (compact
+   "Label: [chip] [chip]" menu), wrapping instead of overflowing. */
+.link-list--inline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+.link-list--inline .link-list-header { margin-bottom: 0; }
+.link-list--inline .link-list-title { font-size: 1rem; font-weight: 600; margin: 0; opacity: 0.7; }
+.link-list--inline .link-list-content { flex: 1 1 auto; }
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
@@ -127,22 +140,22 @@
 
 /* Styled link items */
 .link-list--styled .link-item {
-  /*padding: 12px 16px;*/
-  border: 1px solid var(--border-color, hsl(var(--border)));
-  background-color: hsl(var(--background));
+  padding: 8px 14px;
+  border: 1px solid var(--border-color, color-mix(in srgb, currentColor 20%, transparent));
+  background-color: var(--background-color, transparent);
 }
 
 .link-list--styled .link-item:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px hsl(var(--foreground) / 0.1);
-  background-color: hsl(var(--accent));
-  border-color: var(--hover-color, hsl(var(--accent-foreground) / 0.2));
+  box-shadow: 0 4px 12px color-mix(in srgb, currentColor 12%, transparent);
+  background-color: color-mix(in srgb, currentColor 8%, transparent);
+  border-color: var(--hover-color, color-mix(in srgb, currentColor 35%, transparent));
 }
 
 /* Minimal link items */
 .link-list--minimal .link-item {
   /*padding: 8px 0;*/
-  border-bottom: 1px solid hsl(var(--border));
+  border-bottom: 1px solid color-mix(in srgb, currentColor 15%, transparent);
 }
 
 .link-list--minimal .link-item:last-child {
@@ -151,7 +164,7 @@
 
 .link-list--minimal .link-item:hover {
   /*padding-left: 8px;*/
-  background-color: hsl(var(--accent) / 0.5);
+  background-color: color-mix(in srgb, currentColor 8%, transparent);
 }
 
 /* No URL items (text-only) */
@@ -196,23 +209,23 @@
   font-size: 1rem;
   font-weight: 500;
   margin: 0 0 4px 0;
-  color: var(--link-color, hsl(var(--primary)));
+  color: var(--link-color, currentColor);
   line-height: 1.4;
 }
 
 .link-item:hover .link-item-title {
-  color: var(--hover-color, hsl(var(--primary) / 0.8));
+  color: var(--hover-color, currentColor);
 }
 
 .link-item-description {
   font-size: 0.875rem;
-  color: var(--text-color, hsl(var(--muted-foreground)));
+  color: var(--text-color, currentColor);
   margin: 0;
   line-height: 1.4;
 }
 
 .link-item-icon {
-  color: var(--link-color, hsl(var(--muted-foreground)));
+  color: var(--link-color, currentColor);
   flex-shrink: 0;
   display: flex;
   align-items: center;
@@ -243,7 +256,7 @@
 
 .link-item-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px hsl(var(--foreground) / 0.12);
+  box-shadow: 0 8px 24px color-mix(in srgb, currentColor 12%, transparent);
 }
 
 .link-item-card-link {
@@ -263,7 +276,7 @@
 /* Focus states */
 .link-item:focus {
   outline: none;
-  box-shadow: 0 0 0 2px hsl(var(--background)), 0 0 0 4px hsl(var(--ring));
+  box-shadow: 0 0 0 2px color-mix(in srgb, currentColor 40%, transparent);
 }
 
 /* Dark mode adjustments */
@@ -293,6 +306,6 @@
 /* Focus visible improvements */
 .link-item:focus-visible,
 .link-item-card:focus-visible {
-  outline: 2px solid hsl(var(--ring));
+  outline: 2px solid color-mix(in srgb, currentColor 50%, transparent);
   outline-offset: 2px;
 }

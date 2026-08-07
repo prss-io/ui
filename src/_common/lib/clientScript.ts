@@ -5,7 +5,75 @@ document.addEventListener('DOMContentLoaded', function() {
   initBlockAnimations();
   initAccordionEventListeners();
   initMobileMenuFunctionality();
+  initEmbedBlocks();
 });
+
+// Embed blocks: promote the framed iframe to a full-screen overlay so long
+// third-party pages are actually readable/navigable.
+function initEmbedBlocks() {
+  const setBtn = (embed: HTMLElement, expanded: boolean) => {
+    const btn = embed.querySelector('[data-embed-expand]');
+    if (btn) {
+      btn.innerHTML = expanded
+        ? '<span aria-hidden="true">\u2715</span> Close'
+        : '<span aria-hidden="true">\u2922</span> Expand';
+    }
+  };
+
+  // The host theme may wrap content in a stacking context (e.g. a positioned
+  // shell with a z-index), which would trap a position:fixed overlay beneath the
+  // site header. Re-parenting to <body> while expanded avoids that entirely.
+  const expand = (embed: HTMLElement) => {
+    // Theme tokens (CSS custom properties) stop inheriting once the node leaves
+    // the themed subtree, so pin the resolved surface colours before moving it.
+    const surface = embed.closest('[data-theme]') || document.body;
+    const scs = getComputedStyle(surface as HTMLElement);
+    const bg = scs.backgroundColor;
+    embed.style.backgroundColor = bg && bg !== 'rgba(0, 0, 0, 0)' ? bg : getComputedStyle(document.body).backgroundColor;
+    embed.style.color = scs.color;
+
+    const marker = document.createElement('div');
+    marker.setAttribute('data-embed-placeholder', '');
+    marker.style.display = 'none';
+    embed.parentNode?.insertBefore(marker, embed);
+    (embed as any).__embedMarker = marker;
+    document.body.appendChild(embed);
+    embed.classList.add('is-expanded');
+    document.body.classList.add('embed-block-open');
+    setBtn(embed, true);
+  };
+
+  const collapse = (embed: HTMLElement) => {
+    embed.classList.remove('is-expanded');
+    document.body.classList.remove('embed-block-open');
+    embed.style.backgroundColor = '';
+    embed.style.color = '';
+    const marker = (embed as any).__embedMarker as HTMLElement | undefined;
+    if (marker && marker.parentNode) {
+      marker.parentNode.insertBefore(embed, marker);
+      marker.remove();
+      (embed as any).__embedMarker = null;
+    }
+    setBtn(embed, false);
+  };
+
+  document.querySelectorAll('[data-embed-block]').forEach((node) => {
+    const embed = node as HTMLElement;
+    const btn = embed.querySelector('[data-embed-expand]') as HTMLButtonElement | null;
+    if (!btn || btn.getAttribute('data-embed-bound') === 'true') return;
+    btn.setAttribute('data-embed-bound', 'true');
+
+    btn.addEventListener('click', () => {
+      if (embed.classList.contains('is-expanded')) collapse(embed);
+      else expand(embed);
+    });
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if ((e as KeyboardEvent).key !== 'Escape') return;
+    document.querySelectorAll('[data-embed-block].is-expanded').forEach((n) => collapse(n as HTMLElement));
+  });
+}
 
 function initAccordionEventListeners() {
   // Find all accordion triggers and attach direct event listeners
@@ -826,6 +894,7 @@ if (typeof window !== 'undefined') {
     initCarouselNavigation,
     initBlockAnimations,
     initAccordionEventListeners,
+    initEmbedBlocks,
     handleAccordionClick,
     handleAccordionKeydown
   };
