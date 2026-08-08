@@ -5,10 +5,6 @@
  */
 import { search, loadSearchIndex } from "../src/search";
 
-jest.mock("../src/core", () => ({
-  getPathUrl: (p = "") => `https://example.test/${p}`,
-}));
-
 const pages = [
   {
     path: "/docs/install/",
@@ -36,6 +32,7 @@ const mockIndex = (items: any) => {
 
 beforeEach(() => {
   jest.resetModules();
+  delete (global as any).window?.PRSS;
   mockIndex(pages);
 });
 
@@ -72,8 +69,15 @@ describe("search", () => {
     expect(results[0].heading).toBe("Requirements");
   });
 
-  it("builds a usable url from the indexed path", async () => {
+  it("falls back to the site-absolute path when no runtime is present", async () => {
     const results = await run("npm");
+    expect(results[0].url).toBe("/docs/install/");
+  });
+
+  it("resolves through the runtime when the full library is loaded", async () => {
+    (window as any).PRSS = { getPathUrl: (p = "") => `https://example.test/${p}` };
+    const mod = require("../src/search");
+    const results = await mod.search("npm");
     expect(results[0].url).toBe("https://example.test/docs/install/");
   });
 

@@ -1,4 +1,28 @@
-import { getPathUrl } from "./core";
+/**
+ * Where the build wrote the index.
+ *
+ * SSR pages ship no PRSS runtime at all — only the client bundle — so this
+ * cannot rely on core being initialised. Ask the runtime when it is there, and
+ * otherwise resolve against the site root, which is where the build puts it.
+ */
+const indexUrl = () => {
+  const runtime = (typeof window !== "undefined" ? (window as any) : {}) || {};
+
+  try {
+    if (typeof runtime.PRSS?.getPathUrl === "function") {
+      return runtime.PRSS.getPathUrl("search-index.json");
+    }
+
+    const siteUrl = runtime.PRSSConfig?.url;
+    if (siteUrl) {
+      return `${String(siteUrl).replace(/\/+$/, "")}/search-index.json`;
+    }
+  } catch {
+    /* fall through to the site root */
+  }
+
+  return "/search-index.json";
+};
 
 export interface SearchResult {
   /** Absolute URL of the matching page. */
@@ -54,7 +78,7 @@ const queryTerms = (query: string) => tokenize(query).filter(t => !NOISE.has(t))
  */
 export const loadSearchIndex = (): Promise<IndexedPage[]> => {
   if (!indexPromise) {
-    indexPromise = fetch(getPathUrl("search-index.json"))
+    indexPromise = fetch(indexUrl())
       .then(res => (res.ok ? res.json() : { items: [] }))
       .then(data => (Array.isArray(data?.items) ? data.items : []))
       .catch(() => []);
@@ -64,6 +88,34 @@ export const loadSearchIndex = (): Promise<IndexedPage[]> => {
 
 /** Whether this site was built with a search index. */
 export const hasSearchIndex = async () => (await loadSearchIndex()).length > 0;
+
+/** Resolve an indexed path against the runtime, falling back to the path itself. */
+const pageUrl = (indexedPath: string) => {
+  const runtime = (typeof window !== "undefined" ? (window as any) : {}) || {};
+  try {
+    if (typeof runtime.PRSS?.getPathUrl === "function") {
+      return runtime.PRSS.getPathUrl(String(indexedPath).replace(/^\//, ""));
+    }
+  } catch {
+    /* the stored path is already site-absolute */
+  }
+  return indexedPath;
+};
+
+/**
+ * Expose search on the PRSS global.
+ *
+ * Server-rendered pages never load the full library, so without this a theme's
+ * client script has no way to reach search.
+ */
+export const attachSearch = () => {
+  if (typeof window === "undefined") return;
+  const w = window as any;
+  w.PRSS = w.PRSS || {};
+  if (!w.PRSS.search) w.PRSS.search = search;
+  if (!w.PRSS.loadSearchIndex) w.PRSS.loadSearchIndex = loadSearchIndex;
+  if (!w.PRSS.hasSearchIndex) w.PRSS.hasSearchIndex = hasSearchIndex;
+};
 
 const countOccurrences = (haystack: string, needle: string) => {
   let count = 0;
@@ -143,7 +195,7 @@ export const search = async (query: string, limit = 10): Promise<SearchResult[]>
     if (!scored) continue;
 
     results.push({
-      url: getPathUrl(page.path.replace(/^\//, "")),
+      url: pageUrl(page.path),
       path: page.path,
       title: page.title,
       heading: scored.matchedHeading,

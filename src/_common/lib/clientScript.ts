@@ -1,3 +1,9 @@
+import { attachSearch } from "../../search";
+
+// Server-rendered pages load only this bundle, so search has to be published
+// here for a theme's own script to be able to call it.
+attachSearch();
+
 document.addEventListener('DOMContentLoaded', function() {
   initCodeBlockCopyFunctionality();
   initGalleryLightbox();
