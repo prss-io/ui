@@ -27,6 +27,26 @@
   transform: translateY(-1px);
 }
 
+/* A card with a url is clickable across its whole surface: the title's anchor is
+   stretched over the card rather than nesting a second link, so the accessible
+   name and the click target stay the same element. */
+.cards-block__card--linked {
+  position: relative;
+  cursor: pointer;
+}
+.cards-block__card--linked > .cards-block__body > .cards-block__head a.cards-block__title-link::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  z-index: 1;
+}
+/* Sub-item links must stay clickable in their own right. */
+.cards-block__card--linked .cards-block__children {
+  position: relative;
+  z-index: 2;
+}
+
 .cards-block__media {
   margin: -18px -20px 14px;
   aspect-ratio: 16 / 9;

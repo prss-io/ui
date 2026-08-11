@@ -102,7 +102,10 @@ const CardsBlock: React.FC<CardsBlockProps> = ({ fields }) => {
   };
 
   const renderCard = (c: CardItem, i: number) => (
-    <div className="cards-block__card" key={i}>
+    <div
+      className={cn("cards-block__card", c.url && "cards-block__card--linked")}
+      key={i}
+    >
       {c.image && (
         <div className="cards-block__media">
           <img src={c.image} alt={c.title} />
