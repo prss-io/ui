@@ -26,7 +26,7 @@ interface CardsBlockProps {
   fields: {
     title?: string;
     description?: string;
-    layout?: 'grid' | 'list';
+    layout?: 'grid' | 'list' | 'buttons';
     columns?: string | number;
     cards: string | CardItem[];
   };
@@ -53,6 +53,9 @@ const CardsBlock: React.FC<CardsBlockProps> = ({ fields }) => {
   // overridden by media queries).
   const useCols = layout === 'grid' && cols > 0;
   const gridStyle = useCols ? ({ ['--cards-cols']: String(cols) } as React.CSSProperties) : undefined;
+  // 'buttons' is a row of compact actions: icon and label only, since a button
+  // that needs a paragraph to explain it is not a button.
+  const isButtons = layout === 'buttons';
 
   // An icon is configurable per card. It accepts an image URL, an icon-font class
   // (e.g. "fa fa-code", "bi bi-book") or a plain glyph/emoji — so it works with any
@@ -106,7 +109,7 @@ const CardsBlock: React.FC<CardsBlockProps> = ({ fields }) => {
       className={cn("cards-block__card", c.url && "cards-block__card--linked")}
       key={i}
     >
-      {c.image && (
+      {c.image && !isButtons && (
         <div className="cards-block__media">
           <img src={c.image} alt={c.title} />
         </div>
@@ -116,13 +119,13 @@ const CardsBlock: React.FC<CardsBlockProps> = ({ fields }) => {
         <div className="cards-block__head">
           <div className="cards-block__heading">
             <div className="cards-block__title">{renderTitle(c)}</div>
-            {c.subtitle && <div className="cards-block__subtitle">{c.subtitle}</div>}
+            {c.subtitle && !isButtons && <div className="cards-block__subtitle">{c.subtitle}</div>}
           </div>
           {c.badge && <span className="cards-block__badge">{c.badge}</span>}
         </div>
-        {c.description && <p className="cards-block__desc">{c.description}</p>}
-        {c.meta && <div className="cards-block__meta">{c.meta}</div>}
-        {Array.isArray(c.children) && c.children.length > 0 && (
+        {c.description && !isButtons && <p className="cards-block__desc">{c.description}</p>}
+        {c.meta && !isButtons && <div className="cards-block__meta">{c.meta}</div>}
+        {!isButtons && Array.isArray(c.children) && c.children.length > 0 && (
           <div className="cards-block__children">
             {c.children.map((ch, j) => (
               <div className="cards-block__child" key={j}>
