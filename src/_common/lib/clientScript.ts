@@ -1,4 +1,5 @@
 import { attachSearch } from "../../search";
+import { justifiedLayout } from "./justifiedLayout";
 
 // Server-rendered pages load only this bundle, so search has to be published
 // here for a theme's own script to be able to call it.
@@ -901,29 +902,103 @@ function handleAccordionKeydown(e: KeyboardEvent) {
 }
 
 /**
- * Give each justified gallery item its image's real proportions, so rows can be
- * filled without cropping. The block ships a neutral default ratio; this
- * replaces it as soon as each image reports its size.
+ * Lay every justified gallery out in rows that are filled to the container
+ * width, each image keeping its own proportions (the algorithm photo galleries
+ * have used for years — see justifiedLayout). Ratios are read from the images
+ * themselves, so the layout is redone as they load and on resize.
  */
 function initJustifiedGalleries() {
-  const items = document.querySelectorAll<HTMLElement>('.gallery.justified .gallery-item');
+  const galleries = document.querySelectorAll<HTMLElement>('.gallery.justified');
+  galleries.forEach((gallery) => attachJustifiedGallery(gallery));
+}
+
+const DEFAULT_ITEM_RATIO = 1.5;
+const DEFAULT_ROW_HEIGHT = 288;
+const DEFAULT_SPACING = 8;
+
+function attachJustifiedGallery(gallery: HTMLElement) {
+  const items = Array.from(gallery.querySelectorAll<HTMLElement>('.gallery-item'));
+  if (!items.length) return;
+
+  const readRatios = () =>
+    items.map((item) => {
+      const img = item.querySelector('img');
+      if (!img) return DEFAULT_ITEM_RATIO;
+      // Width/height attributes are known up front; naturalWidth is the
+      // reliable runtime signal (a cached image reports it while `complete` is
+      // still false, and then never fires `load` again).
+      const attrRatio = Number(img.getAttribute('width')) / Number(img.getAttribute('height'));
+      if (Number.isFinite(attrRatio) && attrRatio > 0) return attrRatio;
+      if (img.naturalWidth && img.naturalHeight) return img.naturalWidth / img.naturalHeight;
+      return DEFAULT_ITEM_RATIO;
+    });
+
+  const numberFromStyle = (value: string, fallback: number) => {
+    const parsed = parseFloat(value);
+    return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
+  };
+
+  let lastKey = '';
+
+  const layout = () => {
+    const rowWidth = gallery.getBoundingClientRect().width;
+    if (!rowWidth) return;
+
+    const ratios = readRatios();
+    const styles = getComputedStyle(gallery);
+    const spacing = numberFromStyle(styles.columnGap, DEFAULT_SPACING);
+    const rowHeight = numberFromStyle(
+      styles.getPropertyValue('--gallery-row-height'),
+      DEFAULT_ROW_HEIGHT
+    );
+
+    // Nothing measurable changed: skip the write to avoid resize/load loops.
+    const key = [rowWidth, spacing, rowHeight, ...ratios].join('|');
+    if (key === lastKey) return;
+    lastKey = key;
+
+    const { containerHeight, boxes } = justifiedLayout(ratios, {
+      rowWidth,
+      rowHeight,
+      spacing,
+      heightTolerance: 0.25,
+    });
+
+    items.forEach((item, index) => {
+      const box = boxes[index];
+      if (!box) return;
+      item.style.top = `${box.top}px`;
+      item.style.left = `${box.left}px`;
+      item.style.width = `${box.width}px`;
+      item.style.height = `${box.height}px`;
+    });
+
+    gallery.style.height = `${containerHeight}px`;
+    // Only now are the boxes positioned; before this the CSS fallback applies.
+    gallery.classList.add('is-justified');
+  };
+
+  layout();
+
+  if (gallery.dataset.justifiedBound === 'true') return;
+  gallery.dataset.justifiedBound = 'true';
+
+  let frame = 0;
+  const scheduleLayout = () => {
+    if (frame) cancelAnimationFrame(frame);
+    frame = requestAnimationFrame(() => {
+      frame = 0;
+      layout();
+    });
+  };
 
   items.forEach((item) => {
     const img = item.querySelector('img');
-    if (!img) return;
-
-    const apply = () => {
-      const ratio = img.naturalWidth / img.naturalHeight;
-      if (Number.isFinite(ratio) && ratio > 0) {
-        item.style.setProperty('--ratio', String(ratio.toFixed(4)));
-      }
-    };
-
-    // naturalWidth is the reliable signal: a cached image can report dimensions
-    // while `complete` is still false, and then never fire `load` again.
-    if (img.naturalWidth) apply();
-    img.addEventListener('load', apply);
+    if (img) img.addEventListener('load', scheduleLayout);
   });
+
+  window.addEventListener('resize', scheduleLayout);
+  window.addEventListener('orientationchange', scheduleLayout);
 }
 
 if (typeof window !== 'undefined') {

@@ -1,1 +1,14 @@
+/*!
+ * Justified layout — port of the algorithm used by Flickr's justified-layout
+ * (https://github.com/flickr/justified-layout, MIT), trimmed to the pieces a
+ * gallery block needs.
+ *
+ * Original work Copyright 2019 SmugMug, Inc.
+ * Licensed under the terms of the MIT license.
+ *
+ * Rows are filled to the container width at a height as close to
+ * `rowHeight` as the tolerance allows, so every image keeps its own
+ * proportions instead of being cropped into a grid cell.
+ */
+
 /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */

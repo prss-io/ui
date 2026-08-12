@@ -45,7 +45,7 @@ const Gallery: React.FC<GalleryProps> = ({ fields }) => {
     lightbox = true,
     aspectRatio = "auto",
     imageHeight = "200px",
-    rowHeight = "220px",
+    rowHeight = "288px",
     attribution = "",
     attributionLink = "",
   } = fields;
@@ -156,7 +156,10 @@ const Gallery: React.FC<GalleryProps> = ({ fields }) => {
                     src={image.thumbnail || image.url}
                     alt={image.alt || ""}
                     loading="lazy"
-                    style={{ borderRadius }}
+                    // Themes style prose images with vertical margins at the same
+                    // specificity as this block's CSS; inside a measured box they
+                    // would push the image out of its slot.
+                    style={{ borderRadius, margin: 0 }}
                   />
                   {shouldShowCaptions && image.caption && (
                     <span className="gallery-item-caption">{image.caption}</span>
