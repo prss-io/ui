@@ -17,7 +17,7 @@ interface GalleryProps {
     description?: string;
     images: string; // JSON string
     columns?: string;
-    layout?: "grid" | "carousel";
+    layout?: "grid" | "carousel" | "justified";
     showCaptions?: string | boolean;
     showTitle?: string | boolean;
     spacing?: "small" | "medium" | "large";
@@ -25,6 +25,7 @@ interface GalleryProps {
     lightbox?: string | boolean;
     aspectRatio?: "auto" | "square" | "landscape" | "portrait" | "wide";
     imageHeight?: string;
+    rowHeight?: string;
     attribution?: string; // Optional attribution text
     attributionLink?: string; // Optional attribution link
   };
@@ -44,6 +45,7 @@ const Gallery: React.FC<GalleryProps> = ({ fields }) => {
     lightbox = true,
     aspectRatio = "auto",
     imageHeight = "200px",
+    rowHeight = "220px",
     attribution = "",
     attributionLink = "",
   } = fields;
@@ -52,6 +54,15 @@ const Gallery: React.FC<GalleryProps> = ({ fields }) => {
   const shouldShowCaptions = showCaptions === "true" || showCaptions === true;
   const shouldShowTitle = showTitle === "true" || showTitle === true;
   const shouldEnableLightbox = lightbox === "true" || lightbox === true;
+
+  /**
+   * Photographs are not squares. Unless a shape was explicitly chosen, lay the
+   * gallery out in justified rows that keep each image's own proportions —
+   * cropping every one to a grid cell is what makes a gallery look like a
+   * contact sheet.
+   */
+  const effectiveLayout =
+    layout === "grid" && aspectRatio === "auto" ? "justified" : layout;
 
   // Parse images JSON
   let parsedImages: GalleryImage[] = [];
@@ -107,13 +118,14 @@ const Gallery: React.FC<GalleryProps> = ({ fields }) => {
 
       {/* Gallery Box - Do not modify */}
       <div 
-        className={cn("gallery-box", layout === "carousel" && "carousel-container")}
+        className={cn("gallery-box", effectiveLayout === "carousel" && "carousel-container")}
         style={{
           "--gallery-gap": getGapSpacing(spacing),
+          "--gallery-row-height": rowHeight,
         } as React.CSSProperties}
       >
         {/* Carousel Navigation */}
-        {layout === "carousel" && (
+        {effectiveLayout === "carousel" && (
           <>
             <button className="carousel-nav prev" data-carousel-direction="prev">
               <ChevronLeft size={20} />
@@ -123,12 +135,42 @@ const Gallery: React.FC<GalleryProps> = ({ fields }) => {
             </button>
           </>
         )}
-        
+
+        {effectiveLayout === "justified" ? (
+          <div className="gallery justified" data-gallery-justified>
+            {parsedImages.map((image, index) => {
+              const zoomable = shouldEnableLightbox && !image.noZoom;
+              return (
+                <a
+                  key={index}
+                  className={cn("gallery-item", !zoomable && "no-zoom")}
+                  href={image.url}
+                  // A real link, so a gallery still works without JavaScript.
+                  data-action={zoomable ? "zoom" : undefined}
+                  data-gallery-url={image.url}
+                  data-gallery-alt={image.alt}
+                  data-gallery-caption={image.caption || undefined}
+                  style={{ borderRadius }}
+                >
+                  <img
+                    src={image.thumbnail || image.url}
+                    alt={image.alt || ""}
+                    loading="lazy"
+                    style={{ borderRadius }}
+                  />
+                  {shouldShowCaptions && image.caption && (
+                    <span className="gallery-item-caption">{image.caption}</span>
+                  )}
+                </a>
+              );
+            })}
+          </div>
+        ) : (
         <div 
-          className={cn("gallery", layout)}
+          className={cn("gallery", effectiveLayout)}
           style={{
-            ...(layout === "grid" && getGridColumns(columns)),
-            ...(layout === "carousel" && {
+            ...(effectiveLayout === "grid" && getGridColumns(columns)),
+            ...(effectiveLayout === "carousel" && {
               gap: getGapSpacing(spacing),
             }),
           }}
@@ -154,7 +196,7 @@ const Gallery: React.FC<GalleryProps> = ({ fields }) => {
                   ...(aspectRatio === "landscape" && { aspectRatio: "16 / 9" }),
                   ...(aspectRatio === "portrait" && { aspectRatio: "4 / 5" }),
                   ...(aspectRatio === "wide" && { aspectRatio: "21 / 9" }),
-                  ...(layout === "carousel" && { 
+                  ...(effectiveLayout === "carousel" && { 
                     flexShrink: 0,
                     width: `calc(100% / ${columns} - ${getGapSpacing(spacing)} * (${columns} - 1) / ${columns})`,
                   }),
@@ -164,6 +206,7 @@ const Gallery: React.FC<GalleryProps> = ({ fields }) => {
             );
           })}
         </div>
+        )}
       </div>
 
       {/* Attribution */}

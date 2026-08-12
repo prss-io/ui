@@ -7,12 +7,16 @@ attachSearch();
 document.addEventListener('DOMContentLoaded', function() {
   initCodeBlockCopyFunctionality();
   initGalleryLightbox();
+  initJustifiedGalleries();
   initCarouselNavigation();
   initBlockAnimations();
   initAccordionEventListeners();
   initMobileMenuFunctionality();
   initEmbedBlocks();
 });
+
+// Lazily-loaded gallery images often finish after DOMContentLoaded.
+window.addEventListener('load', () => initJustifiedGalleries());
 
 // Embed blocks: promote the framed iframe to a full-screen overlay so long
 // third-party pages are actually readable/navigable.
@@ -667,26 +671,29 @@ function initGalleryLightbox() {
   // Use event delegation to handle all images with data-action="zoom"
   document.addEventListener('click', function(e) {
     const target = e.target as HTMLElement;
-    
-    // Check if the clicked element is an image with data-action="zoom"
-    if (target.tagName === 'IMG' && target.getAttribute('data-action') === 'zoom') {
-      e.preventDefault();
-      
-      const clickedImage = target as HTMLImageElement;
-      const galleryBox = clickedImage.closest('.gallery-box');
-      
-      if (galleryBox) {
-        // If image is in a gallery, show all gallery images
-        currentGalleryImages = galleryBox.querySelectorAll('img[data-action="zoom"]');
-        currentIndex = Array.from(currentGalleryImages).indexOf(clickedImage);
-      } else {
-        // If image is standalone, show all zoomable images on the page
-        currentGalleryImages = document.querySelectorAll('img[data-action="zoom"]');
-        currentIndex = Array.from(currentGalleryImages).indexOf(clickedImage);
-      }
-      
-      showLightbox(currentIndex);
+
+    // A justified gallery wraps each image in an anchor so it still works
+    // without JavaScript; a grid gallery zooms the image itself.
+    const zoomable = target.closest('[data-action="zoom"]') as HTMLElement | null;
+    if (!zoomable) return;
+
+    e.preventDefault();
+
+    const galleryBox = zoomable.closest('.gallery-box');
+    const selector = zoomable.tagName === 'A'
+      ? 'a[data-action="zoom"]'
+      : 'img[data-action="zoom"]';
+
+    if (galleryBox) {
+      // If the image is in a gallery, show all of that gallery's images
+      currentGalleryImages = galleryBox.querySelectorAll(selector);
+    } else {
+      // If the image is standalone, show all zoomable images on the page
+      currentGalleryImages = document.querySelectorAll(selector);
     }
+
+    currentIndex = Array.from(currentGalleryImages).indexOf(zoomable);
+    showLightbox(currentIndex);
   });
   
   function createLightboxModal(): HTMLElement {
@@ -893,10 +900,37 @@ function handleAccordionKeydown(e: KeyboardEvent) {
   }
 }
 
+/**
+ * Give each justified gallery item its image's real proportions, so rows can be
+ * filled without cropping. The block ships a neutral default ratio; this
+ * replaces it as soon as each image reports its size.
+ */
+function initJustifiedGalleries() {
+  const items = document.querySelectorAll<HTMLElement>('.gallery.justified .gallery-item');
+
+  items.forEach((item) => {
+    const img = item.querySelector('img');
+    if (!img) return;
+
+    const apply = () => {
+      const ratio = img.naturalWidth / img.naturalHeight;
+      if (Number.isFinite(ratio) && ratio > 0) {
+        item.style.setProperty('--ratio', String(ratio.toFixed(4)));
+      }
+    };
+
+    // naturalWidth is the reliable signal: a cached image can report dimensions
+    // while `complete` is still false, and then never fire `load` again.
+    if (img.naturalWidth) apply();
+    img.addEventListener('load', apply);
+  });
+}
+
 if (typeof window !== 'undefined') {
   (window as any).PRSSUIClient = {
     initCodeBlockCopyFunctionality,
     initGalleryLightbox,
+    initJustifiedGalleries,
     initCarouselNavigation,
     initBlockAnimations,
     initAccordionEventListeners,

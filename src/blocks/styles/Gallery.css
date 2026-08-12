@@ -29,6 +29,76 @@
   display: grid;
 }
 
+/* Justified rows: every image keeps its own proportions, and each row is filled
+   to the container's width — the layout photo galleries have used for years.
+   Ratios come from the images themselves at runtime (see attachGallery); until
+   then a mild landscape default keeps the first paint from jumping. */
+.gallery.justified {
+  --gallery-row-height: 220px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gallery-gap);
+}
+
+.gallery.justified .gallery-item {
+  --ratio: 1.5;
+  position: relative;
+  display: block;
+  flex-grow: var(--ratio);
+  flex-basis: calc(var(--ratio) * var(--gallery-row-height));
+  aspect-ratio: var(--ratio);
+  overflow: hidden;
+  cursor: zoom-in;
+  text-decoration: none;
+}
+
+.gallery.justified .gallery-item.no-zoom {
+  cursor: default;
+}
+
+/* Without a filler the last row stretches its images to absurd widths. */
+.gallery.justified::after {
+  content: "";
+  flex-grow: 1000000;
+}
+
+.gallery.justified .gallery-item img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.35s ease;
+}
+
+.gallery.justified .gallery-item:hover img {
+  transform: scale(1.03);
+}
+
+.gallery.justified .gallery-item-caption {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  padding: 1.75rem 0.75rem 0.6rem;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.65), transparent);
+  color: #fff;
+  font-size: 0.8rem;
+  line-height: 1.35;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.gallery.justified .gallery-item:hover .gallery-item-caption,
+.gallery.justified .gallery-item:focus-visible .gallery-item-caption {
+  opacity: 1;
+}
+
+@media (max-width: 640px) {
+  .gallery.justified {
+    --gallery-row-height: 180px;
+  }
+}
+
 /* Carousel layout */
 .gallery.carousel {
   display: flex;
