@@ -1,5 +1,6 @@
 import { attachSearch } from "../../search";
 import { justifiedLayout } from "./justifiedLayout";
+import { initAnalytics } from "./analytics";
 
 // Server-rendered pages load only this bundle, so search has to be published
 // here for a theme's own script to be able to call it.
@@ -14,6 +15,7 @@ document.addEventListener('DOMContentLoaded', function() {
   initAccordionEventListeners();
   initMobileMenuFunctionality();
   initEmbedBlocks();
+  initAnalytics();
 });
 
 // Lazily-loaded gallery images often finish after DOMContentLoaded.
