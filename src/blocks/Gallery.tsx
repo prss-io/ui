@@ -2,6 +2,7 @@ import React from "react";
 import { cn } from "@/lib/utils";
 import { Image, ChevronLeft, ChevronRight } from "lucide-react";
 import "./styles/Gallery.css";
+import "./styles/Lightbox.css";
 
 interface GalleryImage {
   url: string;

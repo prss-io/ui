@@ -657,18 +657,28 @@ function initGalleryLightbox() {
     lightbox = createLightboxModal();
     document.body.appendChild(lightbox);
   }
-  
-  const lightboxImage = lightbox.querySelector('.gallery-lightbox-image') as HTMLImageElement;
-  const lightboxCaption = lightbox.querySelector('.gallery-lightbox-caption') as HTMLElement;
-  const lightboxTitle = lightbox.querySelector('.gallery-lightbox-title') as HTMLElement;
-  const lightboxCaptionText = lightbox.querySelector('.gallery-lightbox-caption-text') as HTMLElement;
-  const closeBtn = lightbox.querySelector('.gallery-lightbox-close') as HTMLElement;
-  const prevBtn = lightbox.querySelector('.gallery-lightbox-prev') as HTMLElement;
-  const nextBtn = lightbox.querySelector('.gallery-lightbox-next') as HTMLElement;
-  
+
+  const viewport = lightbox.querySelector('.gallery-lightbox__viewport') as HTMLElement;
+  const lightboxImage = lightbox.querySelector('.gallery-lightbox__img') as HTMLImageElement;
+  const lightboxCaption = lightbox.querySelector('.gallery-lightbox__caption') as HTMLElement;
+  const lightboxTitle = lightbox.querySelector('.gallery-lightbox__caption-title') as HTMLElement;
+  const lightboxCaptionText = lightbox.querySelector('.gallery-lightbox__caption-text') as HTMLElement;
+  const counter = lightbox.querySelector('.gallery-lightbox__counter') as HTMLElement;
+  const downloadBtn = lightbox.querySelector('.gallery-lightbox__button--download') as HTMLAnchorElement;
+  const zoomBtn = lightbox.querySelector('.gallery-lightbox__button--zoom') as HTMLButtonElement;
+  const closeBtn = lightbox.querySelector('.gallery-lightbox__button--close') as HTMLButtonElement;
+  const prevBtn = lightbox.querySelector('.gallery-lightbox__button--prev') as HTMLButtonElement;
+  const nextBtn = lightbox.querySelector('.gallery-lightbox__button--next') as HTMLButtonElement;
+
   let currentIndex = 0;
-  let currentGalleryImages: NodeListOf<Element>;
-  
+  let currentGalleryImages: Element[] = [];
+  let isOpen = false;
+  let isZoomed = false;
+  let closeTimer = 0;
+
+  // Arrows are for pointer users; touch galleries swipe instead.
+  window.addEventListener('mousemove', () => { lightbox.dataset.hasMouse = 'true'; }, { once: true });
+
   // Use event delegation to handle all images with data-action="zoom"
   document.addEventListener('click', function(e) {
     const target = e.target as HTMLElement;
@@ -685,143 +695,283 @@ function initGalleryLightbox() {
       ? 'a[data-action="zoom"]'
       : 'img[data-action="zoom"]';
 
-    if (galleryBox) {
-      // If the image is in a gallery, show all of that gallery's images
-      currentGalleryImages = galleryBox.querySelectorAll(selector);
-    } else {
-      // If the image is standalone, show all zoomable images on the page
-      currentGalleryImages = document.querySelectorAll(selector);
-    }
+    const scope = galleryBox || document;
+    currentGalleryImages = Array.from(scope.querySelectorAll(selector));
 
-    currentIndex = Array.from(currentGalleryImages).indexOf(zoomable);
-    showLightbox(currentIndex);
+    currentIndex = currentGalleryImages.indexOf(zoomable);
+    showLightbox(currentIndex, true);
   });
   
   function createLightboxModal(): HTMLElement {
+    // Icon shapes are PhotoSwipe's (photoswipe.com, MIT); each is drawn twice so
+    // the stroked copy underneath gives the outline that keeps it legible on
+    // both light and dark images.
+    const icon = (path: string, size = 32, extra = "") => `
+      <svg class="gallery-lightbox__icn" viewBox="0 0 ${size} ${size}" width="${size}" height="${size}" aria-hidden="true">
+        <path class="gallery-lightbox__icn-shadow" d="${path}"/>
+        <path d="${path}"/>
+        ${extra}
+      </svg>`;
+
+    const closeIcon = icon("M24 10l-2-2-6 6-6-6-2 2 6 6-6 6 2 2 6-6 6 6 2-2-6-6z");
+    const zoomIcon = icon(
+      "M17.426 19.926a6 6 0 1 1 1.5-1.5L23 22.5 21.5 24l-4.074-4.074z",
+      32,
+      '<path fill="currentColor" d="M11 16v-2h6v2z"/><path class="gallery-lightbox__zoom-bar-v" fill="currentColor" d="M13 12h2v6h-2z"/>'
+    );
+    const downloadIcon = icon("M20.5 14.3 17.1 18V10h-2.2v7.9l-3.4-3.6L10 16l6 6.1 6-6.1ZM23 23H9v2h14Z");
+    const arrowIcon = icon("M29 43l-3 3-16-16 16-16 3 3-13 13 13 13z", 60);
+
     const modal = document.createElement('div');
     modal.id = 'gallery-lightbox';
-    modal.className = 'gallery-lightbox fixed inset-0 bg-black bg-opacity-90 items-center justify-center p-4';
-    modal.style.zIndex = '9999';
-    modal.style.display = 'none';
+    modal.className = 'gallery-lightbox';
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.dataset.open = 'false';
     modal.innerHTML = `
-      <div class="gallery-lightbox-content relative max-w-7xl max-h-full">
-        <button class="gallery-lightbox-close absolute top-4 right-4 text-white hover:text-gray-300 z-10 w-10 h-10 rounded-full bg-black bg-opacity-50 flex items-center justify-center">
-          ✕
-        </button>
-        
-        <img class="gallery-lightbox-image max-w-full max-h-full object-contain" src="" alt="">
-        
-        <div class="gallery-lightbox-caption absolute bottom-4 left-4 right-4 text-white text-center bg-black bg-opacity-75 p-4 rounded">
-          <h3 class="gallery-lightbox-title text-white text-lg font-semibold mb-2"></h3>
-          <p class="gallery-lightbox-caption-text text-white"></p>
-        </div>
-
-        <button class="gallery-lightbox-prev absolute left-4 top-1/2 transform -translate-y-1/2 text-white hover:text-gray-300 w-12 h-12 rounded-full bg-black bg-opacity-50 flex items-center justify-center text-xl">
-          ◀
-        </button>
-        <button class="gallery-lightbox-next absolute right-4 top-1/2 transform -translate-y-1/2 text-white hover:text-gray-300 w-12 h-12 rounded-full bg-black bg-opacity-50 flex items-center justify-center text-xl">
-          ▶
-        </button>
+      <div class="gallery-lightbox__bg"></div>
+      <div class="gallery-lightbox__viewport">
+        <img class="gallery-lightbox__img" src="" alt="">
       </div>
+      <div class="gallery-lightbox__caption gallery-lightbox__ui">
+        <span class="gallery-lightbox__caption-title"></span>
+        <span class="gallery-lightbox__caption-text"></span>
+      </div>
+      <div class="gallery-lightbox__top-bar gallery-lightbox__ui">
+        <div class="gallery-lightbox__counter"></div>
+        <a class="gallery-lightbox__button gallery-lightbox__button--download" title="Download" download target="_blank" rel="noopener">${downloadIcon}</a>
+        <button class="gallery-lightbox__button gallery-lightbox__button--zoom" type="button" title="Zoom">${zoomIcon}</button>
+        <button class="gallery-lightbox__button gallery-lightbox__button--close" type="button" title="Close">${closeIcon}</button>
+      </div>
+      <button class="gallery-lightbox__button gallery-lightbox__button--arrow gallery-lightbox__button--prev gallery-lightbox__ui" type="button" title="Previous">${arrowIcon}</button>
+      <button class="gallery-lightbox__button gallery-lightbox__button--arrow gallery-lightbox__button--next gallery-lightbox__ui" type="button" title="Next">${arrowIcon}</button>
     `;
     return modal;
   }
   
-  function showLightbox(index: number) {
+  function thumbRectOf(index: number): DOMRect | null {
+    const el = currentGalleryImages[index] as HTMLElement | undefined;
+    if (!el) return null;
+    const img = el.tagName === 'IMG' ? el : el.querySelector('img');
+    const rect = (img || el).getBoundingClientRect();
+    return rect.width && rect.height ? rect : null;
+  }
+
+  /**
+   * Transform that places the opened image over its thumbnail. The scale is
+   * uniform — matching the thumbnail's box on both axes would squash the photo,
+   * since thumbnails are cropped to fill their slot.
+   */
+  function thumbTransform(from: DOMRect, to: DOMRect) {
+    const scale = from.width / to.width;
+    const x = from.left - to.left;
+    const y = from.top + from.height / 2 - to.top - (to.height * scale) / 2;
+    return `translate(${x}px, ${y}px) scale(${scale})`;
+  }
+
+  /** Grow the opened image out of its thumbnail, the way photo viewers do. */
+  function animateFromThumb(from: DOMRect | null) {
+    const to = lightboxImage.getBoundingClientRect();
+    if (!from || !to.width || !to.height) {
+      lightbox.dataset.visible = 'true';
+      return;
+    }
+    lightboxImage.style.transition = 'none';
+    lightboxImage.style.transform = thumbTransform(from, to);
+    // Force the start state to be applied before transitioning away from it.
+    void lightboxImage.offsetWidth;
+    lightboxImage.style.transition = 'transform var(--lightbox-transition-duration) var(--lightbox-easing)';
+    lightboxImage.style.transform = '';
+    lightbox.dataset.visible = 'true';
+  }
+
+  function updateZoomState(reset = false) {
+    if (reset) setZoom(false);
+    const fits = lightboxImage.naturalWidth > lightboxImage.clientWidth + 4
+      || lightboxImage.naturalHeight > lightboxImage.clientHeight + 4;
+    lightbox.dataset.zoomable = fits ? 'true' : 'false';
+  }
+
+  function setZoom(on: boolean) {
+    isZoomed = on && lightbox.dataset.zoomable === 'true';
+    lightbox.dataset.zoomed = isZoomed ? 'true' : 'false';
+    if (isZoomed) {
+      lightboxImage.style.width = `${lightboxImage.naturalWidth}px`;
+      lightboxImage.style.height = `${lightboxImage.naturalHeight}px`;
+      viewport.scrollLeft = (viewport.scrollWidth - viewport.clientWidth) / 2;
+      viewport.scrollTop = (viewport.scrollHeight - viewport.clientHeight) / 2;
+    } else {
+      lightboxImage.style.width = '';
+      lightboxImage.style.height = '';
+    }
+    positionCaption();
+  }
+
+  /** Sit the caption under the image, or over its foot when there is no room. */
+  function positionCaption() {
+    if (isZoomed || !lightboxCaption.textContent?.trim()) {
+      lightboxCaption.style.display = 'none';
+      return;
+    }
+    lightboxCaption.style.display = '';
+    // offset* rather than a client rect: the opening zoom transform must not be
+    // mistaken for the image's resting box.
+    const bottom = lightboxImage.offsetTop + lightboxImage.offsetHeight;
+    const centre = lightboxImage.offsetLeft + lightboxImage.offsetWidth / 2;
+    const height = lightboxCaption.offsetHeight;
+    const room = window.innerHeight - bottom;
+    lightboxCaption.dataset.overlap = room >= height ? 'false' : 'true';
+    lightboxCaption.style.top = `${room >= height ? bottom : Math.max(0, bottom - height)}px`;
+    lightboxCaption.style.left = `${centre}px`;
+  }
+
+  function showLightbox(index: number, opening = false) {
     if (index < 0 || index >= currentGalleryImages.length) return;
-    
+
+    if (closeTimer) {
+      window.clearTimeout(closeTimer);
+      closeTimer = 0;
+    }
+
     currentIndex = index;
     const image = currentGalleryImages[index] as HTMLElement;
-    const imageUrl = image.dataset.galleryUrl || image.getAttribute('src') || '';
+    const imageUrl = image.dataset.galleryUrl || image.getAttribute('href') || image.getAttribute('src') || '';
     const imageAlt = image.dataset.galleryAlt || image.getAttribute('alt') || '';
     const imageCaption = image.dataset.galleryCaption || '';
-    
+
+    const text = (value: string) => (value && value !== 'undefined' ? value.trim() : '');
+    lightboxTitle.textContent = text(imageAlt);
+    lightboxCaptionText.textContent = text(imageCaption);
+
+    downloadBtn.href = imageUrl;
+    counter.textContent = `${index + 1} / ${currentGalleryImages.length}`;
+    lightbox.dataset.single = currentGalleryImages.length <= 1 ? 'true' : 'false';
+    prevBtn.disabled = index === 0;
+    nextBtn.disabled = index === currentGalleryImages.length - 1;
+
+    const from = opening ? thumbRectOf(index) : null;
+    lightboxImage.style.transition = 'none';
+    lightboxImage.style.transform = '';
     lightboxImage.src = imageUrl;
-    lightboxImage.alt = imageAlt;
-    
-    if (imageAlt && imageAlt !== 'undefined' && imageAlt.trim() !== '' && lightboxTitle) {
-      lightboxTitle.textContent = imageAlt;
-      lightboxTitle.style.display = 'block';
-    } else {
-      lightboxTitle.style.display = 'none';
-    }
-    
-    if (imageCaption && imageCaption !== 'undefined' && imageCaption.trim() !== '' && lightboxCaptionText) {
-      lightboxCaptionText.textContent = imageCaption;
-      lightboxCaptionText.style.display = 'block';
-    } else {
-      lightboxCaptionText.style.display = 'none';
-    }
-    
-    const hasTitle = imageAlt && imageAlt !== 'undefined' && imageAlt.trim() !== '';
-    const hasCaption = imageCaption && imageCaption !== 'undefined' && imageCaption.trim() !== '';
-    
-    if (hasTitle || hasCaption) {
-      lightboxCaption.style.display = 'block';
-    } else {
-      lightboxCaption.style.display = 'none';
-    }
-    
-    if (currentGalleryImages.length <= 1) {
-      prevBtn.style.display = 'none';
-      nextBtn.style.display = 'none';
-    } else {
-      prevBtn.style.display = 'flex';
-      nextBtn.style.display = 'flex';
-    }
-    
-    lightbox.style.display = 'flex';
+    lightboxImage.alt = text(imageAlt);
+
+    isOpen = true;
+    lightbox.dataset.open = 'true';
     document.body.style.overflow = 'hidden';
+
+    const onReady = () => {
+      updateZoomState(true);
+      if (opening) animateFromThumb(from);
+      else lightbox.dataset.visible = 'true';
+      // The image box only settles after the open transition, and the caption
+      // sits against its bottom edge.
+      window.setTimeout(positionCaption, 0);
+      lightboxImage.addEventListener('transitionend', positionCaption, { once: true });
+    };
+
+    if (lightboxImage.complete && lightboxImage.naturalWidth) onReady();
+    else lightboxImage.addEventListener('load', onReady, { once: true });
   }
-  
+
   function hideLightbox() {
-    lightbox.style.display = 'none';
-    document.body.style.overflow = '';
+    if (!isOpen) return;
+    isOpen = false;
+
+    setZoom(false);
+    const from = thumbRectOf(currentIndex);
+    const to = lightboxImage.getBoundingClientRect();
+    lightbox.dataset.visible = 'false';
+
+    const inView = from && from.bottom > 0 && from.top < window.innerHeight;
+    if (inView && to.width && to.height) {
+      lightboxImage.style.transition = 'transform var(--lightbox-transition-duration) var(--lightbox-easing)';
+      lightboxImage.style.transform = thumbTransform(from, to);
+    }
+
+    closeTimer = window.setTimeout(() => {
+      closeTimer = 0;
+      lightbox.dataset.open = 'false';
+      lightboxImage.style.transition = 'none';
+      lightboxImage.style.transform = '';
+      lightboxImage.removeAttribute('src');
+      document.body.style.overflow = '';
+    }, 340);
   }
-  
+
   function showNext() {
-    const nextIndex = (currentIndex + 1) % currentGalleryImages.length;
-    showLightbox(nextIndex);
+    if (currentIndex < currentGalleryImages.length - 1) showLightbox(currentIndex + 1);
   }
-  
+
   function showPrev() {
-    const prevIndex = (currentIndex - 1 + currentGalleryImages.length) % currentGalleryImages.length;
-    showLightbox(prevIndex);
+    if (currentIndex > 0) showLightbox(currentIndex - 1);
   }
-  
+
   closeBtn?.addEventListener('click', hideLightbox);
-  
+
+  zoomBtn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    setZoom(!isZoomed);
+  });
+
+  // Clicking the photo itself closes, matching how photo galleries behave.
+  lightboxImage.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (isZoomed) setZoom(false);
+    else hideLightbox();
+  });
+
   lightbox.addEventListener('click', (e) => {
-    if (e.target === lightbox) {
+    if (e.target === lightbox || (e.target as HTMLElement).classList.contains('gallery-lightbox__viewport')) {
       hideLightbox();
     }
   });
-  
+
   nextBtn?.addEventListener('click', (e) => {
     e.stopPropagation();
     showNext();
   });
-  
+
   prevBtn?.addEventListener('click', (e) => {
     e.stopPropagation();
     showPrev();
   });
-  
+
+  // Drag to pan while zoomed in.
+  let panFrom: { x: number; y: number; left: number; top: number } | null = null;
+  viewport.addEventListener('pointerdown', (e) => {
+    if (!isZoomed) return;
+    panFrom = { x: e.clientX, y: e.clientY, left: viewport.scrollLeft, top: viewport.scrollTop };
+    viewport.setPointerCapture(e.pointerId);
+  });
+  viewport.addEventListener('pointermove', (e) => {
+    if (!panFrom) return;
+    viewport.scrollLeft = panFrom.left - (e.clientX - panFrom.x);
+    viewport.scrollTop = panFrom.top - (e.clientY - panFrom.y);
+  });
+  const endPan = () => { panFrom = null; };
+  viewport.addEventListener('pointerup', endPan);
+  viewport.addEventListener('pointercancel', endPan);
+
+  window.addEventListener('resize', () => {
+    if (!isOpen) return;
+    updateZoomState();
+    positionCaption();
+  });
+
   document.addEventListener('keydown', (e) => {
-    if (lightbox.style.display !== 'none' && lightbox.style.display !== '') {
-      switch (e.key) {
-        case 'Escape':
-          hideLightbox();
-          break;
-        case 'ArrowRight':
-          e.preventDefault();
-          showNext();
-          break;
-        case 'ArrowLeft':
-          e.preventDefault();
-          showPrev();
-          break;
-      }
+    if (!isOpen) return;
+    switch (e.key) {
+      case 'Escape':
+        hideLightbox();
+        break;
+      case 'ArrowRight':
+        e.preventDefault();
+        showNext();
+        break;
+      case 'ArrowLeft':
+        e.preventDefault();
+        showPrev();
+        break;
     }
   });
 }

@@ -1,0 +1,272 @@
+/* Lightbox — modelled on PhotoSwipe (photoswipe.com), the viewer used by the
+   Hugo Gallery theme: opaque backdrop, zoom transition from the thumbnail,
+   outlined icons in a top bar, chevron arrows and the caption below the image.
+   Plain CSS on purpose — pulling in Tailwind here would duplicate its base
+   layer in blocks.css. */
+.gallery-lightbox {
+  --lightbox-bg: #000;
+  --lightbox-icon-color: #fff;
+  --lightbox-icon-color-secondary: #4f4f4f;
+  --lightbox-transition-duration: 333ms;
+  --lightbox-easing: cubic-bezier(0.4, 0, 0.22, 1);
+
+  position: fixed;
+  inset: 0;
+  z-index: 100000;
+  display: none;
+  touch-action: none;
+  outline: 0;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+.gallery-lightbox[data-open="true"] {
+  display: block;
+}
+
+.gallery-lightbox * {
+  box-sizing: border-box;
+}
+
+.gallery-lightbox__bg {
+  position: absolute;
+  inset: 0;
+  background: var(--lightbox-bg);
+  opacity: 0;
+  transition: opacity var(--lightbox-transition-duration) var(--lightbox-easing);
+  will-change: opacity;
+}
+
+.gallery-lightbox[data-visible="true"] .gallery-lightbox__bg {
+  opacity: 1;
+}
+
+.gallery-lightbox__viewport {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* Scoped to the root so it outranks the `img { height: 100% }` rules themes
+   apply to content images — those would squash the photo. */
+.gallery-lightbox .gallery-lightbox__img {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  margin: 0;
+  object-fit: contain;
+  transform-origin: 0 0;
+  cursor: zoom-out;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.gallery-lightbox[data-zoomable="true"] .gallery-lightbox__img {
+  cursor: zoom-in;
+}
+
+.gallery-lightbox[data-zoomed="true"] .gallery-lightbox__viewport {
+  overflow: auto;
+  align-items: flex-start;
+  justify-content: flex-start;
+  scrollbar-width: none;
+}
+
+.gallery-lightbox[data-zoomed="true"] .gallery-lightbox__viewport::-webkit-scrollbar {
+  display: none;
+}
+
+.gallery-lightbox[data-zoomed="true"] .gallery-lightbox__img {
+  max-width: none;
+  max-height: none;
+  margin: auto;
+  cursor: grab;
+}
+
+.gallery-lightbox[data-zoomed="true"] .gallery-lightbox__img:active {
+  cursor: grabbing;
+}
+
+/* Chrome (UI that fades with the open/close transition) */
+.gallery-lightbox__ui {
+  opacity: 0;
+  transition: opacity var(--lightbox-transition-duration) var(--lightbox-easing);
+  pointer-events: none;
+}
+
+.gallery-lightbox[data-visible="true"] .gallery-lightbox__ui {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.gallery-lightbox__top-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  width: 100%;
+  height: 60px;
+}
+
+.gallery-lightbox__counter {
+  height: 30px;
+  margin-top: 15px;
+  margin-inline-end: auto;
+  margin-inline-start: 20px;
+  color: var(--lightbox-icon-color);
+  font-size: 14px;
+  line-height: 30px;
+  text-shadow: 1px 1px 3px var(--lightbox-icon-color-secondary);
+  opacity: 0.85;
+}
+
+.gallery-lightbox__button {
+  position: relative;
+  display: block;
+  width: 50px;
+  height: 60px;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  border: 0;
+  background: none;
+  box-shadow: none;
+  cursor: pointer;
+  opacity: 0.85;
+  appearance: none;
+}
+
+.gallery-lightbox__button:hover,
+.gallery-lightbox__button:focus,
+.gallery-lightbox__button:active {
+  border: 0;
+  background: none;
+  box-shadow: none;
+  opacity: 1;
+}
+
+.gallery-lightbox__button:disabled {
+  cursor: auto;
+  opacity: 0.3;
+}
+
+.gallery-lightbox__button--close {
+  margin-right: 6px;
+}
+
+.gallery-lightbox__icn {
+  position: absolute;
+  top: 14px;
+  left: 9px;
+  width: 32px;
+  height: 32px;
+  overflow: hidden;
+  fill: var(--lightbox-icon-color);
+  color: var(--lightbox-icon-color-secondary);
+  pointer-events: none;
+}
+
+/* The outline keeps icons legible on both light and dark images. */
+.gallery-lightbox__icn-shadow {
+  fill: none;
+  stroke: var(--lightbox-icon-color-secondary);
+  stroke-width: 2px;
+}
+
+.gallery-lightbox__button--arrow {
+  position: absolute;
+  top: 50%;
+  z-index: 10;
+  width: 75px;
+  height: 100px;
+  margin-top: -50px;
+}
+
+.gallery-lightbox__button--arrow:disabled {
+  display: none;
+}
+
+.gallery-lightbox__button--arrow .gallery-lightbox__icn {
+  top: 50%;
+  width: 60px;
+  height: 60px;
+  margin-top: -30px;
+}
+
+.gallery-lightbox__button--prev {
+  left: 0;
+}
+
+.gallery-lightbox__button--next {
+  right: 0;
+}
+
+.gallery-lightbox__button--next .gallery-lightbox__icn {
+  right: 14px;
+  left: auto;
+  transform: scale(-1, 1);
+}
+
+/* Hide arrows until a mouse is used, the way touch galleries behave. */
+.gallery-lightbox:not([data-has-mouse="true"]) .gallery-lightbox__button--arrow {
+  visibility: hidden;
+}
+
+.gallery-lightbox[data-single="true"] .gallery-lightbox__button--arrow,
+.gallery-lightbox[data-single="true"] .gallery-lightbox__counter {
+  display: none;
+}
+
+.gallery-lightbox[data-zoomable="false"] .gallery-lightbox__button--zoom {
+  display: none;
+}
+
+.gallery-lightbox[data-zoomed="true"] .gallery-lightbox__zoom-bar-v {
+  display: none;
+}
+
+.gallery-lightbox__caption {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  z-index: 5;
+  max-width: 700px;
+  padding: 15px 0 0;
+  color: #fff;
+  font-size: 14px;
+  line-height: 1.5;
+  text-align: center;
+  transform: translateX(-50%);
+}
+
+.gallery-lightbox__caption:empty {
+  display: none;
+}
+
+.gallery-lightbox__caption-title {
+  display: block;
+  font-weight: 600;
+}
+
+.gallery-lightbox__caption-text {
+  display: block;
+  opacity: 0.85;
+  word-break: break-word;
+}
+
+.gallery-lightbox__caption a {
+  color: #fff;
+}
+
+/* Not enough room under the image: overlay the caption like a mobile viewer. */
+.gallery-lightbox__caption[data-overlap="true"] {
+  padding: 10px 15px;
+  background: rgba(0, 0, 0, 0.5);
+}
