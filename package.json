@@ -1,5 +1,6 @@
 {
   "name": "@prss/ui",
+  "private": true,
   "version": "2.9.7",
   "description": "PRSS UI Library",
   "main": "build/index.js",
@@ -7,7 +8,7 @@
     "build": "node scripts/build.js",
     "test": "jest",
     "prepare": "npm run build",
-    "trypublish": "npm publish || true",
+    "prepublishOnly": "node -e \"console.error('Registry publishing is disabled. Distribute the verified build artifacts through the static release pipeline.'); process.exit(1)\"",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
     "tsc": "tsc"
